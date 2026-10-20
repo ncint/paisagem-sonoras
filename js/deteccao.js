@@ -135,16 +135,26 @@ export class DeteccaoCores {
 
     const alvos = this._alvos;
     const escuras = this._chavesEscuras;
+
+    // Máscara de visualização: um Uint8Array por cor, com 1 nos píxeis
+    // classificados. Mesma resolução da análise; o app.js desenha-a
+    // sobre o vídeo para mostrar exatamente onde cada cor é detetada.
+    const mascaras = {};
+    for (const chave of Object.keys(CORES)) {
+      mascaras[chave] = new Uint8Array(totais);
+    }
+
     for (let i = 0; i < dados.length; i += 4) {
+      const p = i / 4;
       const [h, s, v] = rgbParaHsv(dados[i], dados[i + 1], dados[i + 2]);
 
       // Preto: escuro e pouco saturado, antes de qualquer teste de matiz
       if (escuras.length > 0 && v < LIM_PRETO_VAL && s < LIM_PRETO_SAT) {
         const chave = escuras[0];
         contadores[chave]++;
-        const pixel = (i / 4) % this.largura;
-        somaX[chave] += pixel;
-        somaY[chave] += Math.floor((i / 4) / this.largura);
+        mascaras[chave][p] = 1;
+        somaX[chave] += p % this.largura;
+        somaY[chave] += Math.floor(p / this.largura);
         continue;
       }
 
@@ -158,9 +168,9 @@ export class DeteccaoCores {
           if (h >= gamas[g][0] && h <= gamas[g][1]) {
             const chave = alvos[a][0];
             contadores[chave]++;
-            const pixel = (i / 4) % this.largura;
-            somaX[chave] += pixel;
-            somaY[chave] += Math.floor((i / 4) / this.largura);
+            mascaras[chave][p] = 1;
+            somaX[chave] += p % this.largura;
+            somaY[chave] += Math.floor(p / this.largura);
             break;
           }
         }
@@ -217,6 +227,7 @@ export class DeteccaoCores {
         posX,
         posY,
         intensidade: this.intensidade[chave],
+        mascara: mascaras[chave],
       };
     }
 

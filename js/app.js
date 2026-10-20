@@ -60,6 +60,19 @@ function atualizarSaidas() {
 
 const ctxCanvas = canvasDetecao.getContext('2d');
 
+// Canvas offscreen para desenhar a máscara de uma cor na resolução
+// da análise e depois escalá-la sobre o vídeo.
+const canvasMascara = document.createElement('canvas');
+const ctxMascara = canvasMascara.getContext('2d');
+
+const CORES_MASCARA = {
+  vermelho: [201, 79, 61],
+  verde: [76, 140, 74],
+  azul: [74, 127, 181],
+  amarelo: [212, 172, 43],
+  preto: [40, 40, 40],
+};
+
 function desenharDeteccao(res) {
   const larguraPx = video.clientWidth;
   const alturaPx = video.clientHeight;
@@ -78,6 +91,30 @@ function desenharDeteccao(res) {
   const alturaVisivel = vh * escala;
   const offsetX = (larguraPx - larguraVisivel) / 2;
   const offsetY = (alturaPx - alturaVisivel) / 2;
+
+  // 1) Máscaras: píxeis detetados de cada cor, desenhados com a cor
+  //    respetiva em semitransparência sobre a imagem.
+  canvasMascara.width = res.largura;
+  canvasMascara.height = res.altura;
+  const dadosMascara = ctxMascara.createImageData(res.largura, res.altura);
+
+  for (const [chave, info] of Object.entries(res.cores)) {
+    if (!info.presente) continue;
+    const [r, g, b] = CORES_MASCARA[chave];
+    const mascara = info.mascara;
+    for (let p = 0; p < mascara.length; p++) {
+      if (mascara[p] !== 1) continue;
+      const o = p * 4;
+      dadosMascara.data[o] = r;
+      dadosMascara.data[o + 1] = g;
+      dadosMascara.data[o + 2] = b;
+      dadosMascara.data[o + 3] = 110; // semitransparente
+    }
+  }
+
+  ctxMascara.putImageData(dadosMascara, 0, 0);
+  ctxCanvas.imageSmoothingEnabled = false; // blocos nítidos, sem borrão
+  ctxCanvas.drawImage(canvasMascara, offsetX, offsetY, larguraVisivel, alturaVisivel);
 
   for (const [chave, info] of Object.entries(res.cores)) {
     if (!info.presente || info.posY === null) continue;
