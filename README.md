@@ -112,6 +112,18 @@ Cobrem a classificação das cores nas gamas certas, rejeição de cores
 pouco saturadas, tempos de ativação/desativação da histerese,
 posição vertical média e intensidade resultante.
 
+## Ouvir sons e carregar sons personalizados
+
+Cada elemento no painel tem dois botões:
+
+- **Ouvir**: toca o som desse elemento uma vez, para avaliar sem
+  precisar de ativar a deteção.
+- **Carregar**: substitui o som desse elemento por um ficheiro do
+  teu computador (MP3, WAV, OGG…). A substituição vale para a sessão
+  atual do navegador; ao recarregar a página voltam os sons incluídos.
+  A responsabilidade de licença dos sons carregados é de quem os
+  carrega.
+
 ## Notas técnicas resumidas
 
 - **Deteção:** conversão de cada frame (reduzido a ~160 px de largura)

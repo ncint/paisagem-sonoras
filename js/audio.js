@@ -8,10 +8,13 @@ export class MotorAudio {
     this.ctx = null;
     this.ganhoGeral = null;
     this.canais = null;
+    this.buffers = {};   // buffers por chave, para pré-escuta e substituição
     this.aCarregar = 0;
   }
 
-  async iniciar(volumeGeral = 0.7) {
+  // Garante um AudioContext (chamado a partir de um clique).
+  async garantirContexto(volumeGeral = 0.7) {
+    if (this.ctx) return;
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) {
       throw new Error('Este navegador não suporta a Web Audio API.');
@@ -20,10 +23,54 @@ export class MotorAudio {
     if (this.ctx.state === 'suspended') {
       await this.ctx.resume();
     }
-
     this.ganhoGeral = this.ctx.createGain();
     this.ganhoGeral.gain.value = volumeGeral;
     this.ganhoGeral.connect(this.ctx.destination);
+  }
+
+  // Pré-escuta: toca o som de um elemento uma vez (sem loop), com
+  // fade suave, sem interferir com os loops da deteção.
+  async ouvir(chave) {
+    if (!this.buffers[chave]) return false;
+    await this.garantirContexto();
+    const origem = this.ctx.createBufferSource();
+    origem.buffer = this.buffers[chave];
+    const ganho = this.ctx.createGain();
+    const agora = this.ctx.currentTime;
+    ganho.gain.setValueAtTime(0.0001, agora);
+    ganho.gain.setTargetAtTime(0.9, agora, 0.05);
+    const dur = origem.buffer.duration;
+    ganho.gain.setTargetAtTime(0.0001, agora + dur - 0.4, 0.15);
+    origem.connect(ganho);
+    ganho.connect(this.ganhoGeral);
+    origem.start();
+    origem.stop(agora + dur + 0.2);
+    return true;
+  }
+
+  // Substitui o som de um elemento por um ficheiro carregado pelo
+  // utilizador (ArrayBuffer). Se o motor já estiver a correr, o loop
+  // é trocado sem interromper os restantes.
+  async substituirSom(chave, dadosArrayBuffer, volumeGeral = 0.7) {
+    await this.garantirContexto(volumeGeral);
+    const buffer = await this.ctx.decodeAudioData(dadosArrayBuffer);
+    this.buffers[chave] = buffer;
+
+    const canal = this.canais && this.canais[chave];
+    if (canal) {
+      try { canal.origem.stop(); } catch (e) { /* ignorar */ }
+      const origem = this.ctx.createBufferSource();
+      origem.buffer = buffer;
+      origem.loop = true;
+      origem.connect(canal.filtro);
+      origem.start();
+      canal.origem = origem;
+    }
+    return buffer.duration;
+  }
+
+  async iniciar(volumeGeral = 0.7) {
+    await this.garantirContexto(volumeGeral);
 
     const ficheiros = {
       vermelho: 'audio/aves.wav',
@@ -44,6 +91,7 @@ export class MotorAudio {
         }
         const dados = await resposta.arrayBuffer();
         const buffer = await this.ctx.decodeAudioData(dados);
+        this.buffers[chave] = buffer;
 
         const origem = this.ctx.createBufferSource();
         origem.buffer = buffer;

@@ -219,6 +219,29 @@ body {
 
 .rotulo { font-weight: 550; font-size: 0.95rem; }
 
+.acoes {
+  display: inline-flex;
+  gap: 0.3rem;
+  margin-left: 0.4rem;
+}
+
+.acao {
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border: 1px solid var(--linha);
+  background: var(--fundo);
+  color: var(--texto-suave);
+  border-radius: 6px;
+  padding: 0.18rem 0.5rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.acao:hover { border-color: var(--texto-suave); color: var(--texto); }
+
+.acao.carregar { display: inline-block; }
+
 .estado {
   margin-left: auto;
   font-size: 0.8rem;

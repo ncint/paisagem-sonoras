@@ -267,6 +267,47 @@ function parar() {
 botaoIniciar.addEventListener('click', iniciar);
 botaoParar.addEventListener('click', parar);
 
+// Ouvir / carregar sons por elemento (delegação no painel inteiro)
+const painelElementos = document.querySelector('.coluna-painel');
+
+painelElementos.addEventListener('click', async (evento) => {
+  const botao = evento.target.closest('button.ouvir');
+  if (!botao) return;
+  const chave = botao.dataset.chave;
+  try {
+    // Garante que os sons base estão carregados antes de ouvir
+    if (!motorAudio.pronto) {
+      await motorAudio.iniciar(volumeGeral.value / 100);
+    }
+    const ok = await motorAudio.ouvir(chave);
+    if (!ok) {
+      definirMensagem('Som indisponível. Clica primeiro em «Iniciar instrumento».');
+    }
+  } catch (erro) {
+    definirMensagem(`Não foi possível ouvir o som: ${erro.message}`, true);
+  }
+});
+
+painelElementos.addEventListener('change', async (evento) => {
+  const input = evento.target.closest('input[type="file"]');
+  if (!input) return;
+  const ficheiro = input.files && input.files[0];
+  input.value = '';
+  if (!ficheiro) return;
+  const chave = input.dataset.chave;
+  const nomeEl = NOMES_ELEMENTO[chave];
+  try {
+    const dados = await ficheiro.arrayBuffer();
+    if (!motorAudio.pronto) {
+      await motorAudio.iniciar(volumeGeral.value / 100);
+    }
+    const duracao = await motorAudio.substituirSom(chave, dados, volumeGeral.value / 100);
+    definirMensagem(`Som de «${nomeEl}» substituído por «${ficheiro.name}» (${duracao.toFixed(1)} s).`);
+  } catch (erro) {
+    definirMensagem(`Não foi possível carregar «${ficheiro.name}»: ${erro.message}`, true);
+  }
+});
+
 volumeGeral.addEventListener('input', () => {
   atualizarSaidas();
   motorAudio.definirVolumeGeral(volumeGeral.value / 100);
