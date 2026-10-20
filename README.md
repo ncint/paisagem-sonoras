@@ -16,8 +16,8 @@ intenso; no fundo (perto de quem usa), mais suave.
 A aplicação funciona inteiramente no navegador: o vídeo nunca é
 enviado para nenhum servidor. Não requer instalação nem contas.
 
-> **Estado:** protótipo da Fase 1, funcional mas ainda não publicado.
-> Os sons incluídos são **provisórios e sintetizados** — ver
+> **Estado:** protótipo funcional com gravações de campo reais
+> licenciadas (Wikimedia Commons, CC/domínio público) — ver
 > `audio/LICENCA-E-FONTES.md`.
 
 ## Estrutura do projeto
@@ -28,11 +28,11 @@ css/estilo.css        Estilo da interface
 js/app.js             Orquestração: câmara, loop, botões, indicadores
 js/deteccao.js        Deteção de cores em espaço HSV (com histerese)
 js/audio.js           Motor Web Audio (loops com fades suaves)
-audio/aves.wav        Som de aves (provisório, sintetizado)
-audio/agua.wav        Som de água (provisório, sintetizado)
-audio/vento.wav       Som de vento (provisório, sintetizado)
-audio/grilos.wav      Som de grilos (provisório, sintetizado)
-audio/trovoada.wav    Som de trovoada distante (provisório, sintetizado)
+audio/aves.wav        Canto de aves — gravação real CC BY-SA 4.0
+audio/agua.wav        Água a correr — gravação real, domínio público
+audio/vento.wav       Vento em floresta — gravação real CC BY 4.0
+audio/grilos.wav      Grilo-arborícola — gravação real CC BY-SA 4.0
+audio/trovoada.wav    Trovoada — gravação real CC BY-SA 4.0
 audio/LICENCA-E-FONTES.md   Estado e critérios de licenciamento dos sons
 ferramentas/gerar_audios.py  Script que regenera os sons provisórios
 ferramentas/teste-deteccao.mjs  Testes automatizados da lógica de deteção
@@ -129,8 +129,8 @@ posição vertical média e intensidade resultante.
 
 ## Roadmap
 
-- **Fase 2:** substituir os sons provisórios por gravações de campo
-  licenciadas; refinar limiares de cor; melhorar interface e acessibilidade.
+- **Fase 2:** refinar limiares de cor; melhorar interface e acessibilidade;
+  melhorar as gravações de campo (seleção alternativa, maior duração).
 - **Fase 3:** executar o plano em `TESTES.md` com professores.
 - **Fase 4:** publicar e partilhar URL.
 - **Fase 5:** mais cores, filtros, pan, modos alternativos, atividades

@@ -321,6 +321,23 @@ input[type="range"]::-moz-range-thumb {
 .ajuda ul { margin: 0.6rem 0 0.2rem; padding-left: 1.2rem; }
 .ajuda li { margin-bottom: 0.45rem; font-size: 0.93rem; color: #3f4550; }
 
+/* ---------- Créditos ---------- */
+
+.creditos {
+  border-top: 1px solid var(--linha);
+  padding-top: 1rem;
+  margin-top: 0.5rem;
+}
+
+.creditos p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--texto-suave);
+  max-width: 75ch;
+}
+
+.creditos a { color: var(--azul); }
+
 /* ---------- Responsivo ---------- */
 
 @media (max-width: 56rem) {
