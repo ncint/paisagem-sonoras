@@ -6,14 +6,14 @@
 // Gamas de matiz (graus, 0-360) para cada cor alvo.
 // O vermelho está dividido em duas gamas porque o círculo de matizes
 // passa por 0 (o vermelho puro fica no limite entre 360 e 0).
-// A gama é estreita (até 8°) porque a pele humana tem matiz entre
-// ~10° e ~30°: uma gama mais larga faria a mão ser detetada como
-// vermelho. O satMinExtra exige saturação alta, típica de objetos
-// vermelhos vivos e não da pele.
+// A gama é estreita (até 10°) porque a pele humana tem matiz entre
+// ~28° e ~34°: fora da gama do vermelho, a mão é rejeitada pela
+// matiz. O satMinExtra acrescenta uma margem de saturação apenas
+// para o vermelho (proteção adicional contra tons alaranjados).
 export const CORES = {
   vermelho: {
-    gamas: [[350, 360], [0, 8]],
-    satMinExtra: 0.45,
+    gamas: [[350, 360], [0, 10]],
+    satMinExtra: 0.20,
     nome: 'vermelho',
   },
   verde: {
