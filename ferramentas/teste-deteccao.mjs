@@ -172,11 +172,11 @@ verificar(
     `posição média no topo ~0.12 (obtido: ${info.posY?.toFixed(2)})`,
     info.presente && info.posY > 0.05 && info.posY < 0.2
   );
-  // Intensidade: fundo = intenso, topo = suave.
-  // Deve convergir para 0.15 + 0.85 * posY ≈ 0.25
+  // Intensidade: topo = intenso, fundo = suave.
+  // Deve convergir para 0.15 + 0.85 * (1 - posY) ≈ 0.90
   verificar(
-    `intensidade no topo converge para ~0.25 (obtido: ${info.intensidade.toFixed(2)})`,
-    Math.abs(info.intensidade - (0.15 + 0.85 * info.posY)) < 0.05
+    `intensidade no topo converge para ~0.90 (obtido: ${info.intensidade.toFixed(2)})`,
+    Math.abs(info.intensidade - (0.15 + 0.85 * (1 - info.posY))) < 0.05
   );
 
   // Objeto na faixa do fundo (linhas 56-74): deve ficar mais intenso
@@ -201,8 +201,8 @@ verificar(
   for (let i = 0; i < 40; i++) res2 = d2.analisar(video, SENS);
   const info2 = res2.cores.vermelho;
   verificar(
-    `objeto no fundo dá som mais intenso que no topo (${info2.intensidade.toFixed(2)} > ${info.intensidade.toFixed(2)})`,
-    info2.intensidade > info.intensidade + 0.4
+    `objeto no topo dá som mais intenso que no fundo (${info.intensidade.toFixed(2)} > ${info2.intensidade.toFixed(2)})`,
+    info.intensidade > info2.intensidade + 0.4
   );
 }
 

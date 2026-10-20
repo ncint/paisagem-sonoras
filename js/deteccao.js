@@ -147,10 +147,9 @@ export class DeteccaoCores {
       }
 
       // Intensidade alvo: mapeia a posição VERTICAL em volume relativo.
-      // Fundo da imagem (perto de quem usa) = mais intenso;
-      // topo da imagem = mais suave.
+      // Topo da imagem = mais intenso; fundo da imagem = mais suave.
       const alvo = this.presente[chave] && posY !== null
-        ? 0.15 + 0.85 * Math.min(1, Math.max(0, posY))
+        ? 0.15 + 0.85 * (1 - Math.min(1, Math.max(0, posY)))
         : 0;
 
       // Suavização exponencial para evitar oscilações rápidas

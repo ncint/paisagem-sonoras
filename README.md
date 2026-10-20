@@ -3,8 +3,8 @@
 Instrumento musical interativo por webcam: objetos **vermelhos**,
 **verdes** e **azuis** colocados sobre uma mesa ativam paisagens
 sonoras naturais — aves, água e vento. A posição vertical do objeto no
-enquadramento controla a intensidade do som: perto de quem usa (fundo
-da imagem) é mais intenso; no topo, mais suave.
+enquadramento controla a intensidade do som: no topo da imagem é mais
+intenso; no fundo (perto de quem usa), mais suave.
 
 - Vermelho → **aves**
 - Verde → **água**
