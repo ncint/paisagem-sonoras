@@ -302,7 +302,7 @@ painelElementos.addEventListener('change', async (evento) => {
       await motorAudio.iniciar(volumeGeral.value / 100);
     }
     const duracao = await motorAudio.substituirSom(chave, dados, volumeGeral.value / 100);
-    definirMensagem(`Som de «${nomeEl}» substituído por «${ficheiro.name}» (${duracao.toFixed(1)} s).`);
+    definirMensagem(`Som de «${nomeEl}» substituído por «${ficheiro.name}» (${duracao.toFixed(1)} s). Mantém-se ao parar e reiniciar; volta ao original ao recarregar a página.`);
   } catch (erro) {
     definirMensagem(`Não foi possível carregar «${ficheiro.name}»: ${erro.message}`, true);
   }

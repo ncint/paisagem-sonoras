@@ -102,15 +102,20 @@ pasta para netlify.com/drop) e Cloudflare Pages.
 
 ## Testes automatizados
 
-A lógica de deteção tem testes que correm sem navegador:
+A lógica de deteção e do motor de áudio tem testes que correm sem
+navegador:
 
 ```bash
 node ferramentas/teste-deteccao.mjs
+node ferramentas/teste-audio.mjs
 ```
 
-Cobrem a classificação das cores nas gamas certas, rejeição de cores
-pouco saturadas, tempos de ativação/desativação da histerese,
-posição vertical média e intensidade resultante.
+Os de deteção cobrem a classificação das cores nas gamas certas,
+rejeição de cores pouco saturadas e de tons de pele, tempos de
+ativação/desativação da histerese, posição vertical e intensidade.
+Os de áudio cobrem os fluxos do motor (com Web Audio simulada):
+iniciar, ouvir antes de iniciar, substituição de sons a quente,
+parar/reiniciar a manter sons substituídos e falhas de carregamento.
 
 ## Ouvir sons e carregar sons personalizados
 

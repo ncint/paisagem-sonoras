@@ -85,13 +85,19 @@ export class MotorAudio {
 
     try {
       await Promise.all(Object.entries(ficheiros).map(async ([chave, url]) => {
-        const resposta = await fetch(url);
-        if (!resposta.ok) {
-          throw new Error(`Não foi possível carregar o ficheiro de áudio: ${url}`);
+        // Se já existe um buffer para esta chave (som substituído pelo
+        // utilizador numa sessão anterior, ou pré-carregado), é usado e
+        // o ficheiro base não é descarregado de novo.
+        let buffer = this.buffers[chave];
+        if (!buffer) {
+          const resposta = await fetch(url);
+          if (!resposta.ok) {
+            throw new Error(`Não foi possível carregar o ficheiro de áudio: ${url}`);
+          }
+          const dados = await resposta.arrayBuffer();
+          buffer = await this.ctx.decodeAudioData(dados);
+          this.buffers[chave] = buffer;
         }
-        const dados = await resposta.arrayBuffer();
-        const buffer = await this.ctx.decodeAudioData(dados);
-        this.buffers[chave] = buffer;
 
         const origem = this.ctx.createBufferSource();
         origem.buffer = buffer;
@@ -155,6 +161,9 @@ export class MotorAudio {
   }
 
   get pronto() {
-    return this.ctx !== null && this.aCarregar === 0;
+    // Pronto exige os loops criados (canais), não apenas o contexto:
+    // «Ouvir» cria o contexto antes dos loops e não deve fazer o
+    // instrumento parecer iniciado.
+    return this.ctx !== null && this.canais !== null && this.aCarregar === 0;
   }
 }
