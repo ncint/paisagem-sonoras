@@ -60,9 +60,12 @@ Depois abre `http://localhost:8000`.
 
 ### Material sugerido para os testes
 
-Objetos com cores vivas e saturadas: tampas de garrafa, cartolina,
-blocos de brincar, legos. Evita objetos escuros, com estampas ou
-reflexivos. Boa iluminação frontal, sem sombras fortes sobre a mesa.
+- **Mesa forrada com papel branco** (ou uma parede branca como fundo).
+  O branco é ignorado pela deteção e evita disparos indesejados de
+  fundo — é a configuração recomendada.
+- Objetos com cores vivas e saturadas: tampas de garrafa, cartolina,
+  blocos de brincar. Evita objetos escuros, com estampas ou reflexivos.
+- Boa iluminação frontal, sem sombras fortes sobre a mesa.
 
 ## Publicação (GitHub Pages)
 
