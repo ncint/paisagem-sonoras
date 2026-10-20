@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paisagens Sonoras</title>
+  <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body>
+  <main class="app">
+    <header class="cabecalho">
+      <h1>Paisagens Sonoras</h1>
+      <p class="intro">
+        Coloca objetos <strong>vermelhos</strong>, <strong>verdes</strong> e <strong>azuis</strong> sobre a mesa
+        em frente à câmara. Cada cor ativa um som da natureza: vermelho — aves, verde — água, azul — vento.
+        Mover um objeto para a esquerda torna o som mais suave; para a direita, mais intenso.
+      </p>
+    </header>
+
+    <div class="painel-video">
+      <video id="video" playsinline muted aria-label="Imagem em direto da câmara sobre a mesa de trabalho"></video>
+      <canvas id="canvas-deteccao" aria-hidden="true"></canvas>
+    </div>
+
+    <p id="mensagem" class="mensagem" role="status" aria-live="polite">
+      Clica em «Iniciar instrumento» para começar. Vais precisar de autorizar o acesso à câmara.
+    </p>
+
+    <div class="controles-principais">
+      <button id="botao-iniciar" type="button" class="botao grande iniciar">Iniciar instrumento</button>
+      <button id="botao-parar" type="button" class="botao grande parar" disabled>Parar</button>
+    </div>
+
+    <section class="indicadores" aria-label="Estado dos elementos sonoros">
+      <div class="indicador vermelho" id="ind-aves">
+        <span class="ponto"></span>
+        <span class="rotulo">Aves</span>
+        <span class="estado">desligado</span>
+      </div>
+      <div class="indicador verde" id="ind-agua">
+        <span class="ponto"></span>
+        <span class="rotulo">Água</span>
+        <span class="estado">desligado</span>
+      </div>
+      <div class="indicador azul" id="ind-vento">
+        <span class="ponto"></span>
+        <span class="rotulo">Vento</span>
+        <span class="estado">desligado</span>
+      </div>
+    </section>
+
+    <section class="afinacoes" aria-label="Ajustes do instrumento">
+      <div class="controlo">
+        <label for="volume-geral">Volume geral</label>
+        <input type="range" id="volume-geral" min="0" max="100" value="70">
+        <output id="volume-valor" for="volume-geral">70%</output>
+      </div>
+      <div class="controlo">
+        <label for="sensibilidade">Sensibilidade da deteção</label>
+        <input type="range" id="sensibilidade" min="1" max="100" value="35">
+        <output id="sensibilidade-valor" for="sensibilidade">35%</output>
+      </div>
+    </section>
+
+    <details class="ajuda">
+      <summary>Problemas comuns e resolução</summary>
+      <ul>
+        <li><strong>Não aparece imagem:</strong> confirma que autorizaste a câmara no navegador
+          e que nenhuma outra aplicação a está a usar.</li>
+        <li><strong>Um som não dispara:</strong> usa objetos com cores vivas e bem iluminadas
+          (por exemplo, tampas de garrafa ou cartolina). Aumenta a sensibilidade.</li>
+        <li><strong>Sons disparam sem objeto:</strong> pode haver algo vermelho, verde ou azul
+          no enquadramento (roupa, paredes, objetos ao fundo). Aumenta a área detetada mínima
+          usando objetos maiores, ou baixa a sensibilidade.</li>
+        <li><strong>Iluminação:</strong> luz lateral cria sombras; luz muito quente ou fria
+          altera as cores. Ajusta a sensibilidade conforme necessário.</li>
+        <li><strong>Não consegues abrir por file://</strong> — a câmara só funciona por HTTPS
+          ou localhost. Vê as instruções de teste local.</li>
+        <li><strong>Sem som:</strong> autoriza o áudio no navegador e verifica o volume do
+          sistema. O áudio só é ativado em resposta ao clique no botão «Iniciar instrumento».</li>
+      </ul>
+    </details>
+  </main>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

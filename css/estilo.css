@@ -1,0 +1,207 @@
+/* Paisagens Sonoras — folha de estilo principal */
+
+* { box-sizing: border-box; }
+
+:root {
+  --fundo: #f4f1ea;
+  --texto: #2b2b2b;
+  --vermelho: #c94f3d;
+  --verde: #4c8c4a;
+  --azul: #4a7fb5;
+  --inativo: #b9b4a9;
+  --tempo-transicao: 0.4s;
+}
+
+body {
+  margin: 0;
+  padding: 1.5rem;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  background: var(--fundo);
+  color: var(--texto);
+  line-height: 1.5;
+}
+
+.app {
+  max-width: 64rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ---------- Cabeçalho ---------- */
+
+.cabecalho h1 {
+  margin: 0 0 0.5rem;
+  font-size: 2rem;
+  letter-spacing: 0.02em;
+}
+
+.intro {
+  margin: 0;
+  max-width: 55ch;
+}
+
+/* ---------- Vídeo e canvas ---------- */
+
+.painel-video {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: #1a1a1a;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
+.painel-video video,
+.painel-video canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.painel-video canvas {
+  pointer-events: none;
+}
+
+/* ---------- Mensagens de estado ---------- */
+
+.mensagem {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border-left: 4px solid var(--azul);
+  background: #fff;
+  border-radius: 6px;
+  min-height: 1.5em;
+}
+
+.mensagem.erro { border-left-color: var(--vermelho); }
+
+/* ---------- Botões ---------- */
+
+.botao {
+  font: inherit;
+  border: none;
+  border-radius: 8px;
+  padding: 0.7rem 1.4rem;
+  cursor: pointer;
+  transition: filter var(--tempo-transicao), transform 0.1s ease;
+}
+
+.botao:active { transform: scale(0.97); }
+
+.botao:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.botao.grande { font-size: 1.1rem; }
+
+.botao.iniciar { background: var(--verde); color: #fff; }
+.botao.parar { background: var(--vermelho); color: #fff; }
+
+.controles-principais {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* ---------- Indicadores de atividade ---------- */
+
+.indicadores {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: 1rem;
+}
+
+.indicador {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.8rem 1rem;
+  background: #fff;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  transition: border-color var(--tempo-transicao), box-shadow var(--tempo-transicao);
+}
+
+.indicador .ponto {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--inativo);
+  flex-shrink: 0;
+  transition: background var(--tempo-transicao), box-shadow var(--tempo-transicao);
+}
+
+.indicador .estado {
+  margin-left: auto;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.indicador.vermelho.ativo {
+  border-color: var(--vermelho);
+  box-shadow: 0 0 10px rgba(201, 79, 61, 0.35);
+}
+.indicador.vermelho.ativo .ponto { background: var(--vermelho); }
+
+.indicador.verde.ativo {
+  border-color: var(--verde);
+  box-shadow: 0 0 10px rgba(76, 140, 74, 0.35);
+}
+.indicador.verde.ativo .ponto { background: var(--verde); }
+
+.indicador.azul.ativo {
+  border-color: var(--azul);
+  box-shadow: 0 0 10px rgba(74, 127, 181, 0.35);
+}
+.indicador.azul.ativo .ponto { background: var(--azul); }
+
+/* ---------- Ajustes ---------- */
+
+.afinacoes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 1rem;
+}
+
+.controlo {
+  background: #fff;
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.controlo label { font-weight: 600; }
+
+.controlo input[type="range"] { width: 100%; }
+
+.controlo output { min-width: 3.5ch; text-align: right; }
+
+/* ---------- Ajuda ---------- */
+
+.ajuda {
+  background: #fff;
+  border-radius: 8px;
+  padding: 0.8rem 1.2rem;
+}
+
+.ajuda summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* ---------- Responsivo / tablets ---------- */
+
+@media (max-width: 48rem) {
+  body { padding: 0.75rem; }
+  .cabecalho h1 { font-size: 1.5rem; }
+  .botao.grande { flex: 1; }
+}
