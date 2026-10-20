@@ -1,7 +1,7 @@
 // deteccao.js — deteção cromática em espaço HSV
 // Analisa a imagem em resolução reduzida, agrupa píxeis por matiz (hue)
 // e devolve, para cada cor alvo, a presença, a área detetada e a posição
-// horizontal média do objeto.
+// vertical média do objeto (que controla a intensidade do som).
 
 // Gamas de matiz (graus, 0-360) para cada cor alvo.
 // O vermelho está dividido em duas gamas porque o círculo de matizes
@@ -57,6 +57,7 @@ export class DeteccaoCores {
   analisar(video, sensibilidade) {
     const altura = Math.round((video.videoHeight / video.videoWidth) * this.largura);
     if (!video.videoWidth || !altura) return null;
+    const alturaAnalise = altura;
 
     // O canvas só é criado no primeiro uso: evita depender do DOM no
     // construtor e permite testar a lógica de estado fora do navegador.
@@ -79,6 +80,7 @@ export class DeteccaoCores {
     const resultado = {};
     const contadores = {};
     const somaX = {};
+    const somaY = {};
 
     // Lista de [chave, gamas] pré-computada uma única vez
     if (!this._alvos) {
@@ -88,6 +90,7 @@ export class DeteccaoCores {
     for (const [chave] of this._alvos) {
       contadores[chave] = 0;
       somaX[chave] = 0;
+      somaY[chave] = 0;
     }
 
     const alvos = this._alvos;
@@ -100,7 +103,9 @@ export class DeteccaoCores {
           if (h >= gamas[g][0] && h <= gamas[g][1]) {
             const chave = alvos[a][0];
             contadores[chave]++;
-            somaX[chave] += (i / 4) % this.largura;
+            const pixel = (i / 4) % this.largura;
+            somaX[chave] += pixel;
+            somaY[chave] += Math.floor((i / 4) / this.largura);
             break;
           }
         }
@@ -133,15 +138,19 @@ export class DeteccaoCores {
         this.presente[chave] = false;
       }
 
-      // Posição horizontal média (0 = esquerda, 1 = direita)
+      // Posições médias (0 = topo/esquerda, 1 = fundo/direita)
       let posX = null;
+      let posY = null;
       if (contadores[chave] > 0) {
         posX = (somaX[chave] / contadores[chave]) / this.largura;
+        posY = (somaY[chave] / contadores[chave]) / alturaAnalise;
       }
 
-      // Intensidade alvo: presente → mapeia posição X em volume relativo
-      const alvo = this.presente[chave] && posX !== null
-        ? 0.15 + 0.85 * Math.min(1, Math.max(0, posX))
+      // Intensidade alvo: mapeia a posição VERTICAL em volume relativo.
+      // Fundo da imagem (perto de quem usa) = mais intenso;
+      // topo da imagem = mais suave.
+      const alvo = this.presente[chave] && posY !== null
+        ? 0.15 + 0.85 * Math.min(1, Math.max(0, posY))
         : 0;
 
       // Suavização exponencial para evitar oscilações rápidas
@@ -152,6 +161,7 @@ export class DeteccaoCores {
         presente: this.presente[chave],
         area: fracArea,
         posX,
+        posY,
         intensidade: this.intensidade[chave],
       };
     }

@@ -6,7 +6,7 @@
 //   1. conversão RGB → HSV (casos conhecidos);
 //   2. classificação de cores puras nas gamas certas;
 //   3. histerese: ligar em ~3 frames, desligar em ~8 frames;
-//   4. posição horizontal média e intensidade resultante.
+//   4. posição vertical média e intensidade resultante.
 
 import { CORES, DeteccaoCores } from '../js/deteccao.js';
 
@@ -143,10 +143,10 @@ verificar(
   framesDesligar >= 8 && framesDesligar <= 10
 );
 
-// ---------- 3. Posição horizontal e intensidade ----------
+// ---------- 3. Posição vertical e intensidade ----------
 
 {
-  // Objeto colocado só no quarto esquerdo do frame (píxeis 0-24 de 100)
+  // Objeto colocado só na faixa do topo do frame (linhas 0-18 de 75)
   const d = new DeteccaoCores(100);
   const [r, g, b] = hexParaRgb('#d0342c');
   d.canvas = { width: 0, height: 0 };
@@ -155,7 +155,7 @@ verificar(
     getImageData(x, y, l, a) {
       const dados = new Uint8ClampedArray(l * a * 4);
       for (let i = 0; i < l * a; i++) {
-        const comObjeto = i % l < 25; // coluna esquerda
+        const comObjeto = Math.floor(i / l) < 19; // topo
         const o = i * 4;
         dados[o] = comObjeto ? r : 200;
         dados[o + 1] = comObjeto ? g : 200;
@@ -169,13 +169,40 @@ verificar(
   for (let i = 0; i < 40; i++) res = d.analisar(video, SENS);
   const info = res.cores.vermelho;
   verificar(
-    `posição média à esquerda ~0.12 (obtido: ${info.posX?.toFixed(2)})`,
-    info.presente && info.posX > 0.05 && info.posX < 0.2
+    `posição média no topo ~0.12 (obtido: ${info.posY?.toFixed(2)})`,
+    info.presente && info.posY > 0.05 && info.posY < 0.2
   );
-  // Intensidade deve convergir para 0.15 + 0.85 * posX ≈ 0.25
+  // Intensidade: fundo = intenso, topo = suave.
+  // Deve convergir para 0.15 + 0.85 * posY ≈ 0.25
   verificar(
-    `intensidade converge para ~0.25 (obtido: ${info.intensidade.toFixed(2)})`,
-    Math.abs(info.intensidade - (0.15 + 0.85 * info.posX)) < 0.05
+    `intensidade no topo converge para ~0.25 (obtido: ${info.intensidade.toFixed(2)})`,
+    Math.abs(info.intensidade - (0.15 + 0.85 * info.posY)) < 0.05
+  );
+
+  // Objeto na faixa do fundo (linhas 56-74): deve ficar mais intenso
+  const d2 = new DeteccaoCores(100);
+  d2.canvas = { width: 0, height: 0 };
+  d2.ctx = {
+    drawImage() {},
+    getImageData(x, y, l, a) {
+      const dados = new Uint8ClampedArray(l * a * 4);
+      for (let i = 0; i < l * a; i++) {
+        const comObjeto = Math.floor(i / l) >= 56; // fundo
+        const o = i * 4;
+        dados[o] = comObjeto ? r : 200;
+        dados[o + 1] = comObjeto ? g : 200;
+        dados[o + 2] = comObjeto ? b : 200;
+        dados[o + 3] = 255;
+      }
+      return { data: dados };
+    },
+  };
+  let res2 = null;
+  for (let i = 0; i < 40; i++) res2 = d2.analisar(video, SENS);
+  const info2 = res2.cores.vermelho;
+  verificar(
+    `objeto no fundo dá som mais intenso que no topo (${info2.intensidade.toFixed(2)} > ${info.intensidade.toFixed(2)})`,
+    info2.intensidade > info.intensidade + 0.4
   );
 }
 

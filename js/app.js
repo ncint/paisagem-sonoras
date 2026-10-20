@@ -65,34 +65,39 @@ function desenharDeteccao(res) {
   ctxCanvas.clearRect(0, 0, larguraPx, alturaPx);
 
   // O vídeo usa object-fit: cover, que recorta a imagem se a proporção
-  // da câmara não for 4:3. É preciso mapear a posição horizontal da
-  // imagem original para a área efetivamente visível.
+  // da câmara não for 4:3. É preciso mapear as posições da imagem
+  // original para a área efetivamente visível.
   const vw = video.videoWidth || 1;
   const vh = video.videoHeight || 1;
   const escala = Math.max(larguraPx / vw, alturaPx / vh);
   const larguraVisivel = vw * escala;
+  const alturaVisivel = vh * escala;
   const offsetX = (larguraPx - larguraVisivel) / 2;
+  const offsetY = (alturaPx - alturaVisivel) / 2;
 
   for (const [chave, info] of Object.entries(res.cores)) {
-    if (!info.presente || info.posX === null) continue;
+    if (!info.presente || info.posY === null) continue;
     const cor = {
       vermelho: 'rgba(201, 79, 61, 0.85)',
       verde: 'rgba(76, 140, 74, 0.85)',
       azul: 'rgba(74, 127, 181, 0.85)',
     }[chave];
 
-    // Marcador vertical na posição média horizontal do objeto
-    const x = info.posX * larguraVisivel + offsetX;
+    // Marcador horizontal na altura média do objeto (que controla a
+    // intensidade): fundo da imagem = mais intenso.
+    const y = info.posY * alturaVisivel + offsetY;
     ctxCanvas.fillStyle = cor;
-    ctxCanvas.fillRect(x - 2, 0, 4, alturaPx);
+    ctxCanvas.fillRect(0, y - 2, larguraPx, 4);
 
-    // Etiqueta no topo
+    // Etiqueta junto ao marcador, sem sair da imagem
     ctxCanvas.font = 'bold 16px sans-serif';
     const rotulo = NOMES_ELEMENTO[chave];
     const larguraTexto = ctxCanvas.measureText(rotulo).width;
-    ctxCanvas.fillRect(Math.min(Math.max(x - larguraTexto / 2 - 6, 4), larguraPx - larguraTexto - 16), 8, larguraTexto + 12, 26);
+    const etiqX = Math.min(Math.max(offsetX + 8, 8), Math.max(larguraPx - larguraTexto - 16, 8));
+    const etiqY = Math.min(Math.max(y - 34, 4), Math.max(alturaPx - 30, 4));
+    ctxCanvas.fillRect(etiqX, etiqY, larguraTexto + 12, 26);
     ctxCanvas.fillStyle = '#fff';
-    ctxCanvas.fillText(rotulo, Math.min(Math.max(x - larguraTexto / 2, 8), larguraPx - larguraTexto - 8), 27);
+    ctxCanvas.fillText(rotulo, etiqX + 6, etiqY + 19);
   }
 }
 

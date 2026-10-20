@@ -24,7 +24,7 @@ Registra o resultado de cada teste numa coluna à direita.
 | 6 | Detecção do azul | Retirar o verde e colocar o objeto azul | «Vento» fica ativo e ouve-se o som de vento | ☐ | |
 | 7 | Falso positivo | Mesa vazia, sem objetos no enquadramento | Nenhum dos três sons fica ativo | ☐ | |
 | 8 | Coexistência | Colocar os três objetos em simultâneo | Os três indicadores ficam ativos e os três sons ouvem-se misturados | ☐ | |
-| 9 | Posição horizontal | Mover um objeto devagar da esquerda para a direita | O som fica mais intenso à direita, sem saltos abruptos | ☐ | |
+| 9 | Posição vertical | Mover um objeto devagar do topo da imagem para o fundo | O som fica mais intenso no fundo (perto de ti) e mais suave no topo, sem saltos abruptos | ☐ | |
 | 10 | Retirar objeto | Retirar um objeto do enquadramento | O som desse elemento desliga-se gradualmente (cerca de meio segundo), sem corte seco | ☐ | |
 | 11 | Volume geral | Mexer o cursor «Volume geral» | O volume total muda imediatamente | ☐ | |
 | 12 | Sensibilidade | Baixar a sensibilidade ao mínimo e testar deteção; depois subir ao máximo | No mínimo, a deteção exige cores mais fortes/maiores; no máximo, deteta mais facilmente | ☐ | |

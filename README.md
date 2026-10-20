@@ -2,8 +2,9 @@
 
 Instrumento musical interativo por webcam: objetos **vermelhos**,
 **verdes** e **azuis** colocados sobre uma mesa ativam paisagens
-sonoras naturais — aves, água e vento. A posição horizontal do objeto
-controla a intensidade do som.
+sonoras naturais — aves, água e vento. A posição vertical do objeto no
+enquadramento controla a intensidade do som: perto de quem usa (fundo
+da imagem) é mais intenso; no topo, mais suave.
 
 - Vermelho → **aves**
 - Verde → **água**
@@ -101,7 +102,7 @@ node ferramentas/teste-deteccao.mjs
 
 Cobrem a classificação das cores nas gamas certas, rejeição de cores
 pouco saturadas, tempos de ativação/desativação da histerese,
-posição horizontal média e intensidade resultante.
+posição vertical média e intensidade resultante.
 
 ## Notas técnicas resumidas
 
