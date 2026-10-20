@@ -188,6 +188,13 @@ body {
   color: var(--texto-suave);
 }
 
+.nota-painel {
+  margin: -0.5rem 0 0.9rem;
+  font-size: 0.8rem;
+  color: var(--texto-suave);
+  line-height: 1.45;
+}
+
 /* ---------- Indicadores ---------- */
 
 .indicadores {

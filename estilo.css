@@ -1,0 +1,381 @@
+/* Paisagens Sonoras — folha de estilo principal */
+
+* { box-sizing: border-box; }
+
+:root {
+  --fundo: #f7f6f2;
+  --superficie: #ffffff;
+  --texto: #1f2328;
+  --texto-suave: #6b7280;
+  --linha: #e5e7eb;
+  --sombra-suave: 0 1px 3px rgba(31, 35, 40, 0.07);
+  --sombra: 0 4px 16px rgba(31, 35, 40, 0.08);
+  --raio: 10px;
+  --vermelho: #c0503c;
+  --verde: #3f8f5a;
+  --azul: #3b6ea8;
+  --amarelo: #c99a2e;
+  --preto: #33312b;
+  --tempo-transicao: 0.4s;
+}
+
+body {
+  margin: 0;
+  padding: 2rem 1.5rem 3rem;
+  font-family: -apple-system, "Segoe UI", system-ui, Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--fundo);
+  color: var(--texto);
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app {
+  max-width: 72rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+/* ---------- Cabeçalho ---------- */
+
+.cabecalho {
+  max-width: 70ch;
+}
+
+.kicker {
+  margin: 0 0 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--texto-suave);
+}
+
+.cabecalho h1 {
+  margin: 0 0 0.6rem;
+  font-size: 2.1rem;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+}
+
+.intro {
+  margin: 0;
+  color: var(--texto-suave);
+  font-size: 0.98rem;
+  max-width: 64ch;
+}
+
+.intro strong { color: var(--texto); font-weight: 600; }
+
+/* ---------- Grelha principal ---------- */
+
+.grelha {
+  display: grid;
+  grid-template-columns: minmax(0, 1.8fr) minmax(15rem, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.coluna-video {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.coluna-painel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 0;
+}
+
+/* ---------- Vídeo e canvas ---------- */
+
+.painel-video {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: #16181c;
+  border-radius: var(--raio);
+  overflow: hidden;
+  box-shadow: var(--sombra);
+}
+
+.painel-video video,
+.painel-video canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.painel-video canvas {
+  pointer-events: none;
+}
+
+/* ---------- Mensagens de estado ---------- */
+
+.mensagem {
+  margin: 0;
+  padding: 0.8rem 1rem;
+  border-left: 3px solid var(--azul);
+  background: var(--superficie);
+  border-radius: 8px;
+  box-shadow: var(--sombra-suave);
+  font-size: 0.95rem;
+  min-height: 1.5em;
+}
+
+.mensagem.erro { border-left-color: var(--vermelho); }
+
+/* ---------- Botões ---------- */
+
+.controles-principais {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.botao {
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: 8px;
+  padding: 0.7rem 1.5rem;
+  cursor: pointer;
+  color: #fff;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.botao.iniciar { background: var(--verde); }
+.botao.iniciar:hover:not(:disabled) { background: #357a4b; }
+.botao.parar { background: #6b7280; }
+.botao.parar:hover:not(:disabled) { background: var(--vermelho); }
+
+.botao:active:not(:disabled) { transform: scale(0.98); }
+
+.botao:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.botao.grande {
+  flex: 1;
+  padding: 0.85rem 1.5rem;
+  font-size: 1.02rem;
+}
+
+/* ---------- Painéis laterais ---------- */
+
+.painel {
+  background: var(--superficie);
+  border: 1px solid var(--linha);
+  border-radius: var(--raio);
+  padding: 1.1rem 1.2rem;
+  box-shadow: var(--sombra-suave);
+}
+
+.titulo-painel {
+  margin: 0 0 0.9rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--texto-suave);
+}
+
+.nota-painel {
+  margin: -0.5rem 0 0.9rem;
+  font-size: 0.8rem;
+  color: var(--texto-suave);
+  line-height: 1.45;
+}
+
+/* ---------- Indicadores ---------- */
+
+.indicadores {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
+  gap: 0.75rem;
+}
+
+.painel .indicador {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--linha);
+  border-radius: 8px;
+  transition: border-color var(--tempo-transicao), box-shadow var(--tempo-transicao);
+}
+
+.painel .indicador + .indicador { margin-top: 0.75rem; }
+
+.chip {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--linha);
+  flex-shrink: 0;
+  transition: background var(--tempo-transicao), box-shadow var(--tempo-transicao);
+}
+
+.rotulo { font-weight: 550; font-size: 0.95rem; }
+
+.acoes {
+  display: inline-flex;
+  gap: 0.3rem;
+  margin-left: 0.4rem;
+}
+
+.acao {
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border: 1px solid var(--linha);
+  background: var(--fundo);
+  color: var(--texto-suave);
+  border-radius: 6px;
+  padding: 0.18rem 0.5rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.acao:hover { border-color: var(--texto-suave); color: var(--texto); }
+
+.acao.carregar { display: inline-block; }
+
+.estado {
+  margin-left: auto;
+  font-size: 0.8rem;
+  color: var(--texto-suave);
+  font-variant-numeric: tabular-nums;
+}
+
+.indicador.ativo { box-shadow: var(--sombra-suave); }
+.indicador.ativo .estado { color: var(--texto); font-weight: 600; }
+
+.indicador.vermelho.ativo { border-color: var(--vermelho); }
+.indicador.vermelho.ativo .chip { background: var(--vermelho); }
+.indicador.verde.ativo { border-color: var(--verde); }
+.indicador.verde.ativo .chip { background: var(--verde); }
+.indicador.azul.ativo { border-color: var(--azul); }
+.indicador.azul.ativo .chip { background: var(--azul); }
+.indicador.amarelo.ativo { border-color: var(--amarelo); }
+.indicador.amarelo.ativo .chip { background: var(--amarelo); }
+.indicador.preto.ativo { border-color: var(--preto); }
+.indicador.preto.ativo .chip { background: var(--preto); }
+
+/* ---------- Ajustes ---------- */
+
+.controlo {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas: "label valor" "slider slider";
+  gap: 0.35rem 0.75rem;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+
+.controlo + .controlo {
+  border-top: 1px solid var(--linha);
+  margin-top: 0.5rem;
+  padding-top: 0.9rem;
+}
+
+.controlo label { font-weight: 550; font-size: 0.92rem; grid-area: label; }
+
+.controlo output {
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+  font-variant-numeric: tabular-nums;
+  grid-area: valor;
+}
+
+.controlo input[type="range"] { grid-area: slider; width: 100%; }
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 5px;
+  border-radius: 999px;
+  background: #d7d9de;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1.5px solid #9ca3af;
+  box-shadow: 0 1px 3px rgba(31, 35, 40, 0.25);
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover { border-color: var(--texto); }
+
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1.5px solid #9ca3af;
+  box-shadow: 0 1px 3px rgba(31, 35, 40, 0.25);
+  cursor: pointer;
+}
+
+/* ---------- Ajuda ---------- */
+
+.ajuda {
+  background: var(--superficie);
+  border: 1px solid var(--linha);
+  border-radius: var(--raio);
+  padding: 0.9rem 1.3rem;
+  box-shadow: var(--sombra-suave);
+}
+
+.ajuda summary {
+  cursor: pointer;
+  font-weight: 550;
+  font-size: 0.95rem;
+}
+
+.ajuda ul { margin: 0.6rem 0 0.2rem; padding-left: 1.2rem; }
+.ajuda li { margin-bottom: 0.45rem; font-size: 0.93rem; color: #3f4550; }
+
+/* ---------- Créditos ---------- */
+
+.creditos {
+  border-top: 1px solid var(--linha);
+  padding-top: 1rem;
+  margin-top: 0.5rem;
+}
+
+.creditos p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--texto-suave);
+  max-width: 75ch;
+}
+
+.creditos a { color: var(--azul); }
+
+/* ---------- Responsivo ---------- */
+
+@media (max-width: 56rem) {
+  .grelha { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 34rem) {
+  body { padding: 1rem 0.85rem 2rem; }
+  .cabecalho h1 { font-size: 1.6rem; }
+  .botao.grande { padding: 0.8rem 1rem; }
+}

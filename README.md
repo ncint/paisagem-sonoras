@@ -123,7 +123,7 @@ Cada elemento no painel tem dois botões:
 
 - **Ouvir**: toca o som desse elemento uma vez, para avaliar sem
   precisar de ativar a deteção.
-- **Carregar**: substitui o som desse elemento por um ficheiro do
+- **Trocar som**: substitui o som desse elemento por um ficheiro do
   teu computador (MP3, WAV, OGG…). A substituição vale para a sessão
   atual do navegador; ao recarregar a página voltam os sons incluídos.
   A responsabilidade de licença dos sons carregados é de quem os
