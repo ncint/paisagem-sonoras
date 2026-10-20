@@ -151,7 +151,7 @@ function atualizarIndicadores(cores) {
     const el = indicadores[chave];
     el.classList.toggle('ativo', info.presente);
     const estadoEl = el.querySelector('.estado');
-    estadoEl.textContent = info.presente ? 'ativo' : 'desligado';
+    estadoEl.textContent = info.presente ? 'ativo' : '—';
   }
 }
 
@@ -254,7 +254,7 @@ function parar() {
   ctxCanvas.clearRect(0, 0, canvasDetecao.width, canvasDetecao.height);
   for (const el of Object.values(indicadores)) {
     el.classList.remove('ativo');
-    el.querySelector('.estado').textContent = 'desligado';
+    el.querySelector('.estado').textContent = '—';
   }
 
   botaoParar.disabled = true;

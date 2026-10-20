@@ -9,6 +9,7 @@
 <body>
   <main class="app">
     <header class="cabecalho">
+      <div class="selo" aria-hidden="true">🍂 🐦 💧</div>
       <h1>Paisagens Sonoras</h1>
       <p class="intro">
         Coloca objetos <strong>vermelhos</strong>, <strong>verdes</strong>, <strong>azuis</strong>,
@@ -16,8 +17,7 @@
         em frente à câmara. Cada cor ativa um som da natureza: vermelho — aves, verde — água,
         azul — vento, amarelo — grilos, preto — trovoada distante.
         Mover um objeto para o topo da imagem torna o som mais intenso; para o fundo (perto de ti), mais suave.
-        Recomendamos forrar a mesa com papel branco (ou usar uma parede branca): o fundo branco é ignorado
-        pela deteção e evita disparos indesejados.
+        Forra a mesa com papel branco: o fundo branco é ignorado pela deteção.
       </p>
     </header>
 
@@ -37,29 +37,29 @@
 
     <section class="indicadores" aria-label="Estado dos elementos sonoros">
       <div class="indicador vermelho" id="ind-aves">
-        <span class="ponto"></span>
+        <span class="icone" aria-hidden="true">🐦</span>
         <span class="rotulo">Aves</span>
-        <span class="estado">desligado</span>
+        <span class="estado">—</span>
       </div>
       <div class="indicador verde" id="ind-agua">
-        <span class="ponto"></span>
+        <span class="icone" aria-hidden="true">💧</span>
         <span class="rotulo">Água</span>
-        <span class="estado">desligado</span>
+        <span class="estado">—</span>
       </div>
       <div class="indicador azul" id="ind-vento">
-        <span class="ponto"></span>
+        <span class="icone" aria-hidden="true">🍃</span>
         <span class="rotulo">Vento</span>
-        <span class="estado">desligado</span>
+        <span class="estado">—</span>
       </div>
       <div class="indicador amarelo" id="ind-grilos">
-        <span class="ponto"></span>
+        <span class="icone" aria-hidden="true">🦗</span>
         <span class="rotulo">Grilos</span>
-        <span class="estado">desligado</span>
+        <span class="estado">—</span>
       </div>
       <div class="indicador preto" id="ind-trovoada">
-        <span class="ponto"></span>
+        <span class="icone" aria-hidden="true">⛈️</span>
         <span class="rotulo">Trovoada</span>
-        <span class="estado">desligado</span>
+        <span class="estado">—</span>
       </div>
     </section>
 
