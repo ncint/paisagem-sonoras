@@ -169,6 +169,7 @@ function passo() {
       if (motorAudio.pronto) {
         for (const [chave, info] of Object.entries(resultado.cores)) {
           motorAudio.definirIntensidade(chave, info.intensidade);
+          if (info.presente) motorAudio.definirPan(chave, info.posX);
         }
       }
     }

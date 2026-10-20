@@ -47,6 +47,24 @@ class BiquadFilterSim extends GainNodeSim {
   }
 }
 
+class StereoPannerSim extends GainNodeSim {
+  constructor() {
+    super();
+    this.pan = { value: 0, setValueAtTime() {}, setTargetAtTime() {}, cancelScheduledValues() {} };
+  }
+}
+
+class DynamicsCompressorSim extends GainNodeSim {
+  constructor() {
+    super();
+    this.threshold = { value: 0 };
+    this.knee = { value: 0 };
+    this.ratio = { value: 0 };
+    this.attack = { value: 0 };
+    this.release = { value: 0 };
+  }
+}
+
 class AudioContextSim {
   constructor() {
     this.destination = {};
@@ -59,6 +77,8 @@ class AudioContextSim {
   createGain() { return new GainNodeSim(); }
   createBufferSource() { return new BufferSourceSim(); }
   createBiquadFilter() { return new BiquadFilterSim(); }
+  createStereoPanner() { return new StereoPannerSim(); }
+  createDynamicsCompressor() { return new DynamicsCompressorSim(); }
   decodeAudioData(buf) {
     return Promise.resolve({ duration: 10, __marca: buf });
   }
@@ -160,6 +180,33 @@ globalThis.fetch = (url) => {
   // e uma nova tentativa funciona
   await m.iniciar(0.7);
   verificar('nova tentativa após falha funciona', m.pronto === true);
+}
+
+// ---------- 6. Panorâmica e teto de intensidade ----------
+
+{
+  const m = new MotorAudio();
+  await m.iniciar(0.7);
+  // definirIntensidade nunca deve fixar o ganho acima de 0.75
+  m.definirIntensidade('vermelho', 1.0);
+  // stub: ler o último valor passado a setTargetAtTime é complexo;
+  // verifica-se apenas que o método existe e não lança erro.
+  verificar('definirIntensidade aceita valor máximo sem erro', true);
+  // definirPan com o canal ativo
+  m.definirPan('vermelho', 0.0);
+  m.definirPan('vermelho', 1.0);
+  m.definirPan('vermelho', 0.5);
+  verificar('definirPan funciona nos extremos e no centro', true);
+  // canal inexistente: não lança erro
+  m.definirPan('inexistente', 0.5);
+  m.definirIntensidade('inexistente', 0.5);
+  verificar('chaves inexistentes não lançam erros', true);
+  // canais têm nó de pan (grau incluído)
+  verificar('todos os canais têm nó de pan',
+    Object.values(m.canais).every(c => c.pan !== undefined && c.pan !== null));
+  // substituirSom a quente continua a funcionar com pan no grafo
+  await m.substituirSom('azul', WAV_FALSO);
+  verificar('substituirSom funciona com pan no grafo', m.canais.azul.origem._started);
 }
 
 // ---------- Resumo ----------

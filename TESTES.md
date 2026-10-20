@@ -37,6 +37,9 @@ Registra o resultado de cada teste numa coluna à direita.
 | 14 | Iluminação diferente | Repetir os testes 4-6 com luz diferente (mais escura, luz lateral) | A deteção continua a funcionar, eventualmente com ajuste de sensibilidade | ☐ | |
 | 15 | Transições sonoras | Mover os objetos continuamente durante 1 minuto | Não há cliques, estalidos nem reinícios audíveis dos sons | ☐ | |
 | 16 | Tablet | Abrir a aplicação num tablet e repetir os testes 2, 4, 6 e 9 | Funciona com câmara frontal ou traseira e toque nos controlos | ☐ | |
+| 17 | Sombra (preto) | Fazer sombra com a mão sobre o papel branco, sem objeto preto | A trovoada NÃO dispara com a sombra | ☐ | |
+| 18 | Panorâmica estéreo | Com colunas estéreo, mover um objeto da esquerda para a direita | O som desloca-se entre as colunas esquerda e direita | ☐ | |
+| 19 | Pico de volume | Ativar os cinco sons simultaneamente no volume máximo | A mistura fica cheia mas sem distorção audível | ☐ | |
 
 ## Estado dos testes (para preencher)
 

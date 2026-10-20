@@ -138,9 +138,13 @@ Cada elemento no painel tem dois botões:
 - **Estabilidade:** histerese (ligar exige 3 frames consecutivos,
   desligar exige 8) e suavização exponencial da intensidade, evitando
   ativações/desativações repetidas com pequenos movimentos.
-- **Áudio:** três loops contínuos com `GainNode`; presença/posição
-  apenas ajustam o ganho com transições exponenciais — o loop nunca
-  reinicia quando o objeto se move, evitando cortes.
+- **Áudio:** cinco loops contínuos com `GainNode` e `StereoPanner`;
+  presença/posição apenas ajustam ganho e pan com transições
+  exponenciais — o loop nunca reinicia quando o objeto se move. A
+  posição horizontal do objeto move o som no estéreo; a vertical
+  controla a intensidade. Um `DynamicsCompressor` na saída evita
+  picos e distorção quando várias paisagens tocam em simultâneo, e
+  cada canal está limitado a 75% do ganho máximo.
 - **Privacidade:** todo o processamento é local; nenhum vídeo sai do
   dispositivo.
 

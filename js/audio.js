@@ -23,9 +23,23 @@ export class MotorAudio {
     if (this.ctx.state === 'suspended') {
       await this.ctx.resume();
     }
+
+    // Compressor antes da saída: com cinco paisagens simultâneas, a
+    // soma dos ganhos pode exceder 1 e provocar clipping audível. O
+    // compressor limita os picos de forma suave (ataque rápido,
+    // libertação lenta), mantendo a mistura natural.
+    this.compressor = this.ctx.createDynamicsCompressor();
+    this.compressor.threshold.value = -18; // começa a comprimir cedo
+    this.compressor.knee.value = 12;        // transição suave
+    this.compressor.ratio.value = 4;        // compressão moderada
+    this.compressor.attack.value = 0.01;
+    this.compressor.release.value = 0.3;
+
     this.ganhoGeral = this.ctx.createGain();
     this.ganhoGeral.gain.value = volumeGeral;
-    this.ganhoGeral.connect(this.ctx.destination);
+
+    this.ganhoGeral.connect(this.compressor);
+    this.compressor.connect(this.ctx.destination);
   }
 
   // Pré-escuta: toca o som de um elemento uma vez (sem loop), com
@@ -108,15 +122,27 @@ export class MotorAudio {
         filtro.type = 'lowpass';
         filtro.frequency.value = 6500;
 
+        // Panorâmica estéreo: a posição horizontal do objeto move o
+        // som entre as colunas esquerda e direita.
+        const pan = this.ctx.createStereoPanner
+          ? this.ctx.createStereoPanner()
+          : null; // navegadores antigos: sem pan, som centrado
+        if (pan) pan.pan.value = 0;
+
         const ganho = this.ctx.createGain();
         ganho.gain.value = 0.0001; // praticamente silencioso até haver deteção
 
         origem.connect(filtro);
         filtro.connect(ganho);
-        ganho.connect(this.ganhoGeral);
+        if (pan) {
+          ganho.connect(pan);
+          pan.connect(this.ganhoGeral);
+        } else {
+          ganho.connect(this.ganhoGeral);
+        }
         origem.start();
 
-        this.canais[chave] = { origem, ganho, filtro };
+        this.canais[chave] = { origem, ganho, filtro, pan };
         this.aCarregar--;
       }));
     } catch (erro) {
@@ -137,13 +163,24 @@ export class MotorAudio {
   }
 
   // Atualiza o ganho de um canal com transição suave (rampa exponencial).
+  // valor: 0 a 1; mapeado para um máximo de 0,75 por canal.
   definirIntensidade(chave, valor) {
     const canal = this.canais && this.canais[chave];
     if (!canal) return;
-    const alvo = Math.max(0.0001, Math.min(1, valor));
+    const TETO_CANAL = 0.75;
+    const alvo = Math.max(0.0001, Math.min(1, valor)) * TETO_CANAL;
     const agora = this.ctx.currentTime;
     // setTargetAtTime dá aproximação exponencial sem cliques
     canal.ganho.gain.setTargetAtTime(alvo, agora, 0.25);
+  }
+
+  // Posição horizontal (0 = esquerda, 1 = direita) em panorâmica estéreo.
+  definirPan(chave, posX) {
+    const canal = this.canais && this.canais[chave];
+    if (!canal || !canal.pan) return; // sem suporte: permanece centrado
+    const alvo = (Math.min(1, Math.max(0, posX)) - 0.5) * 2; // -1 a 1
+    const agora = this.ctx.currentTime;
+    canal.pan.pan.setTargetAtTime(alvo, agora, 0.3);
   }
 
   parar() {

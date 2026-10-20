@@ -67,10 +67,12 @@ export class DeteccaoCores {
     this.framesAtivo = {};
     this.presente = {};
     this.intensidade = {};
+    this.posXSuave = {};
     for (const chave of Object.keys(CORES)) {
       this.framesAtivo[chave] = 0;
       this.presente[chave] = false;
       this.intensidade[chave] = 0;
+      this.posXSuave[chave] = 0.5;
     }
   }
 
@@ -128,10 +130,13 @@ export class DeteccaoCores {
     // Limiares do preto. Testado ANTES da classificação por matiz:
     // um píxel escuro (V baixo) deve contar para o preto mesmo que
     // a sua matiz fosse de outra cor — objetos coloridos reais têm
-    // V muito acima (azuis vivos: V ~0,7-0,9). A saturação só limita
-    // para não capturar tons escuros ainda claramente coloridos.
-    const LIM_PRETO_VAL = 0.38;
-    const LIM_PRETO_SAT = 0.60;
+    // V muito acima (azuis vivos: V ~0,7-0,9).
+    // Apertado de propósito: V<0,28 exige escuridão genuína. Sombras
+    // sobre o papel branco em luz normal têm V ~0,3-0,6 e ficam fora;
+    // tons escuros mas claramente coloridos (azul-escuro) têm
+    // saturação alta e passam à classificação por matiz.
+    const LIM_PRETO_VAL = 0.28;
+    const LIM_PRETO_SAT = 0.45;
 
     const alvos = this._alvos;
     const escuras = this._chavesEscuras;
@@ -204,12 +209,22 @@ export class DeteccaoCores {
       }
 
       // Posições médias (0 = topo/esquerda, 1 = fundo/direita)
-      let posX = null;
+      let posXBruto = null;
       let posY = null;
       if (contadores[chave] > 0) {
-        posX = (somaX[chave] / contadores[chave]) / this.largura;
+        posXBruto = (somaX[chave] / contadores[chave]) / this.largura;
         posY = (somaY[chave] / contadores[chave]) / alturaAnalise;
       }
+
+      // Posição horizontal suavizada (para a panorâmica estéreo):
+      // média móvel exponencial quando o objeto está presente,
+      // relaxamento suave quando ausente.
+      const alvoX = this.presente[chave] && posXBruto !== null
+        ? Math.min(1, Math.max(0, posXBruto))
+        : this.posXSuave[chave];
+      this.posXSuave[chave] += (this.presente[chave] ? 0.15 : 0.05)
+        * (alvoX - this.posXSuave[chave]);
+      const posX = this.posXSuave[chave];
 
       // Intensidade alvo: mapeia a posição VERTICAL em volume relativo.
       // Topo da imagem = mais intenso; fundo da imagem = mais suave.

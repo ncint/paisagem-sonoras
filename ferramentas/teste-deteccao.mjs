@@ -71,7 +71,7 @@ const casos = [
   ['#f1c40f', 'amarelo'], // amarelo vivo
   ['#d4ac2b', 'amarelo'], // amarelo ouro
   ['#1a1a1a', 'preto'],    // preto quase puro
-  ['#2c3e50', 'preto'],    // cinza-azulado escuro
+  ['#0d0d0d', 'preto'],    // preto profundo
 ];
 
 for (const [hex, esperado] of casos) {
@@ -96,6 +96,32 @@ for (const [hex, esperado] of casos) {
   for (let i = 0; i < 10; i++) res = d.analisar(video, SENS);
   const detetadas = Object.values(res.cores).filter((i) => i.presente).length;
   verificar('cinzento neutro → sem deteção', detetadas === 0, `detetadas: ${detetadas}`);
+}
+
+// Sombras sobre o papel branco (branco escurecido) NÃO devem ser
+// detetadas como preto: têm V ~0,3-0,6, acima do limiar V<0,28.
+const sombras = [
+  ['#a9a9a9', 'sombra leve'],
+  ['#7d7d7d', 'sombra média'],
+  ['#5a5a5a', 'sombra forte'],
+];
+for (const [hex, nome] of sombras) {
+  const d = criarDetectorComFrame(hex, 0.10);
+  let res = null;
+  for (let i = 0; i < 10; i++) res = d.analisar(video, SENS);
+  const alguma = Object.values(res.cores).some((i) => i.presente);
+  verificar(`${nome} (${hex}) → sem deteção`, !alguma, 'detetada');
+}
+
+// Azul-escuro dessaturado (#2c3e50, matiz 210°): com os limiares
+// apertados do preto, deve ser classificado como AZUL (a sua matiz
+// real), não como preto.
+{
+  const d = criarDetectorComFrame('#2c3e50');
+  let res = null;
+  for (let i = 0; i < 5; i++) res = d.analisar(video, SENS);
+  verificar('#2c3e50 → azul (não preto)',
+    res.cores.azul.presente && !res.cores.preto.presente);
 }
 
 // Tons de pele humana NÃO devem ser detetados como vermelho:
