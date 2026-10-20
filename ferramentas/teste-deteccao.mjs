@@ -94,6 +94,24 @@ for (const [hex, esperado] of casos) {
   verificar('cinzento neutro → sem deteção', detetadas === 0, `detetadas: ${detetadas}`);
 }
 
+// Tons de pele humana NÃO devem ser detetados como vermelho:
+// a pele tem matiz ~10-30° (fora da gama do vermelho) e saturação
+// moderada (abaixo do satMinExtra do vermelho).
+const tonsDePele = [
+  ['#f1c27d', 'pele clara'],
+  ['#e0ac69', 'pele média'],
+  ['#c68642', 'pele morena'],
+  ['#8d5524', 'pele escura'],
+];
+for (const [hex, nome] of tonsDePele) {
+  const d = criarDetectorComFrame(hex, 0.10); // mão é grande na imagem
+  let res = null;
+  for (let i = 0; i < 10; i++) res = d.analisar(video, SENS);
+  const vermelhoAtivo = res.cores.vermelho.presente;
+  verificar(`${nome} (${hex}) → não detetada como vermelho`,
+    !vermelhoAtivo, 'detetada como vermelho');
+}
+
 // ---------- 2. Histerese: tempos de ligar/desligar ----------
 
 function contarFramesParaLigar(hex) {

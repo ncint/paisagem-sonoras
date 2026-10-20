@@ -6,9 +6,14 @@
 // Gamas de matiz (graus, 0-360) para cada cor alvo.
 // O vermelho está dividido em duas gamas porque o círculo de matizes
 // passa por 0 (o vermelho puro fica no limite entre 360 e 0).
+// A gama é estreita (até 8°) porque a pele humana tem matiz entre
+// ~10° e ~30°: uma gama mais larga faria a mão ser detetada como
+// vermelho. O satMinExtra exige saturação alta, típica de objetos
+// vermelhos vivos e não da pele.
 export const CORES = {
   vermelho: {
-    gamas: [[345, 360], [0, 12]],
+    gamas: [[350, 360], [0, 8]],
+    satMinExtra: 0.45,
     nome: 'vermelho',
   },
   verde: {
@@ -82,9 +87,11 @@ export class DeteccaoCores {
     const somaX = {};
     const somaY = {};
 
-    // Lista de [chave, gamas] pré-computada uma única vez
+    // Lista de [chave, gamas, limiarExtra] pré-computada uma única vez
     if (!this._alvos) {
-      this._alvos = Object.entries(CORES).map(([chave, def]) => [chave, def.gamas]);
+      this._alvos = Object.entries(CORES).map(
+        ([chave, def]) => [chave, def.gamas, def.satMinExtra || 0]
+      );
     }
 
     for (const [chave] of this._alvos) {
@@ -98,6 +105,9 @@ export class DeteccaoCores {
       const [h, s, v] = rgbParaHsv(dados[i], dados[i + 1], dados[i + 2]);
       if (s < satMin || v < valMin) continue;
       for (let a = 0; a < alvos.length; a++) {
+        // Cores com satMinExtra exigem saturação adicional (ex.: o vermelho,
+        // para não confundir a pele humana com um objeto vermelho)
+        if (s < satMin + alvos[a][2]) continue;
         const gamas = alvos[a][1];
         for (let g = 0; g < gamas.length; g++) {
           if (h >= gamas[g][0] && h <= gamas[g][1]) {
