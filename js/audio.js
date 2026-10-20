@@ -29,6 +29,8 @@ export class MotorAudio {
       vermelho: 'audio/aves.wav',
       verde: 'audio/agua.wav',
       azul: 'audio/vento.wav',
+      amarelo: 'audio/grilos.wav',
+      preto: 'audio/trovoada.wav',
     };
 
     this.canais = {};

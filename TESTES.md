@@ -9,8 +9,9 @@ Registra o resultado de cada teste numa coluna à direita.
   Firefox ou Safari recentes) e webcam integrada.
 - **Mesa forrada com papel branco** (ou uma parede branca como fundo)
   — configuração recomendada: o branco é ignorado pela deteção.
-- Três objetos coloridos: um **vermelho**, um **verde**, um **azul**,
-  com cores vivas (tampas de garrafa, cartolina, blocos).
+- Cinco objetos coloridos: **vermelho**, **verde**, **azul**,
+  **amarelo** e **preto**, com cores vivas (tampas de garrafa,
+  cartolina, blocos).
 - Mesa iluminada de forma uniforme, sem sombras fortes.
 - Colunas ou auscultores ligados.
 
@@ -25,7 +26,9 @@ Registra o resultado de cada teste numa coluna à direita.
 | 5 | Detecção do verde | Retirar o vermelho e colocar o objeto verde | «Água» fica ativo e ouve-se o som de água | ☐ | |
 | 6 | Detecção do azul | Retirar o verde e colocar o objeto azul | «Vento» fica ativo e ouve-se o som de vento | ☐ | |
 | 7 | Falso positivo | Mesa vazia (forrada com papel branco), sem objetos no enquadramento, durante ~10 segundos | Nenhum dos três sons fica ativo | ☐ | |
-| 8 | Coexistência | Colocar os três objetos em simultâneo | Os três indicadores ficam ativos e os três sons ouvem-se misturados | ☐ | |
+| 8 | Coexistência | Colocar os cinco objetos em simultâneo | Os cinco indicadores ficam ativos e os sons ouvem-se misturados | ☐ | |
+| 8b | Detecção do amarelo | Colocar só o objeto amarelo na mesa | O indicador «Grilos» fica ativo e ouve-se o som de grilos | ☐ | |
+| 8c | Detecção do preto | Colocar só o objeto preto na mesa | O indicador «Trovoada» fica ativo e ouve-se o som de trovoada | ☐ | |
 | 9 | Posição vertical | Mover um objeto devagar do fundo da imagem para o topo | O som fica mais intenso no topo e mais suave no fundo (perto de ti), sem saltos abruptos | ☐ | |
 | 10 | Retirar objeto | Retirar um objeto do enquadramento | O som desse elemento desliga-se gradualmente (cerca de meio segundo), sem corte seco | ☐ | |
 | 11 | Volume geral | Mexer o cursor «Volume geral» | O volume total muda imediatamente | ☐ | |

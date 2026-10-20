@@ -24,6 +24,17 @@ export const CORES = {
     gamas: [[190, 255]],
     nome: 'azul',
   },
+  amarelo: {
+    gamas: [[45, 70]],
+    nome: 'amarelo',
+  },
+  // O preto não tem matiz: é detetado por ser escuro e pouco
+  // saturado (ver LIM_PRETO_* em baixo), não por gamas de matiz.
+  preto: {
+    gamas: [],
+    escuro: true,
+    nome: 'preto',
+  },
 };
 
 // Converte RGB (0-255) em HSV (h 0-360, s 0-1, v 0-1).
@@ -51,10 +62,16 @@ export class DeteccaoCores {
     this.canvas = null;
     this.ctx = null;
     // Estado por cor: contadores de frames para histerese
-    this.framesAtivo = { vermelho: 0, verde: 0, azul: 0 };
-    this.presente = { vermelho: false, verde: false, azul: false };
-    // Intensidade suavizada (média móvel exponencial) por cor
-    this.intensidade = { vermelho: 0, verde: 0, azul: 0 };
+    // Estado por cor, gerado a partir de CORES: acrescentar uma cor
+    // nova em CORES basta para que o estado a acompanhe.
+    this.framesAtivo = {};
+    this.presente = {};
+    this.intensidade = {};
+    for (const chave of Object.keys(CORES)) {
+      this.framesAtivo[chave] = 0;
+      this.presente[chave] = false;
+      this.intensidade[chave] = 0;
+    }
   }
 
   // sensibilidade: 0.01 (pouco sensível) a 1 (muito sensível).
@@ -89,9 +106,12 @@ export class DeteccaoCores {
 
     // Lista de [chave, gamas, limiarExtra] pré-computada uma única vez
     if (!this._alvos) {
-      this._alvos = Object.entries(CORES).map(
-        ([chave, def]) => [chave, def.gamas, def.satMinExtra || 0]
-      );
+      this._alvos = Object.entries(CORES)
+        .filter(([, def]) => !def.escuro)
+        .map(([chave, def]) => [chave, def.gamas, def.satMinExtra || 0]);
+      this._chavesEscuras = Object.entries(CORES)
+        .filter(([, def]) => def.escuro)
+        .map(([chave]) => chave);
     }
 
     for (const [chave] of this._alvos) {
@@ -99,10 +119,35 @@ export class DeteccaoCores {
       somaX[chave] = 0;
       somaY[chave] = 0;
     }
+    for (const chave of this._chavesEscuras) {
+      contadores[chave] = 0;
+      somaX[chave] = 0;
+      somaY[chave] = 0;
+    }
+
+    // Limiares do preto. Testado ANTES da classificação por matiz:
+    // um píxel escuro (V baixo) deve contar para o preto mesmo que
+    // a sua matiz fosse de outra cor — objetos coloridos reais têm
+    // V muito acima (azuis vivos: V ~0,7-0,9). A saturação só limita
+    // para não capturar tons escuros ainda claramente coloridos.
+    const LIM_PRETO_VAL = 0.38;
+    const LIM_PRETO_SAT = 0.60;
 
     const alvos = this._alvos;
+    const escuras = this._chavesEscuras;
     for (let i = 0; i < dados.length; i += 4) {
       const [h, s, v] = rgbParaHsv(dados[i], dados[i + 1], dados[i + 2]);
+
+      // Preto: escuro e pouco saturado, antes de qualquer teste de matiz
+      if (escuras.length > 0 && v < LIM_PRETO_VAL && s < LIM_PRETO_SAT) {
+        const chave = escuras[0];
+        contadores[chave]++;
+        const pixel = (i / 4) % this.largura;
+        somaX[chave] += pixel;
+        somaY[chave] += Math.floor((i / 4) / this.largura);
+        continue;
+      }
+
       if (s < satMin || v < valMin) continue;
       for (let a = 0; a < alvos.length; a++) {
         // Cores com satMinExtra exigem saturação adicional (ex.: o vermelho,

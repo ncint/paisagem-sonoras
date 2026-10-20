@@ -68,6 +68,10 @@ const casos = [
   ['#27ae60', 'verde'],   // verde folha
   ['#3498db', 'azul'],    // azul vivo
   ['#2980b9', 'azul'],    // azul mais escuro
+  ['#f1c40f', 'amarelo'], // amarelo vivo
+  ['#d4ac2b', 'amarelo'], // amarelo ouro
+  ['#1a1a1a', 'preto'],    // preto quase puro
+  ['#2c3e50', 'preto'],    // cinza-azulado escuro
 ];
 
 for (const [hex, esperado] of casos) {

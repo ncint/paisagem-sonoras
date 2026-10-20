@@ -134,12 +134,68 @@ def gerar_vento(duracao=9.0):
     return base * rajada * 3.0, duracao
 
 
+def gerar_grilos(duracao=9.0):
+    """Grilos: pulsos rítmicos agudos com batimentos diferentes."""
+    n = int(duracao * SR)
+    saida = np.zeros(n)
+    rng = np.random.default_rng(21)
+
+    # Três "grilos" com ritmos e frequências diferentes
+    cantores = [
+        (4200, 18, 0.6),   # (freq, pulsos/s, ganho)
+        (5100, 24, 0.45),
+        (3600, 12, 0.5),
+    ]
+    t = np.arange(n) / SR
+    for f0, taxa, ganho in cantores:
+        fase_pulso = (t * taxa) % 1.0
+        env_pulso = np.exp(-fase_pulso * 22) * (fase_pulso < 0.35)
+        # ligeiro tremor na frequência para soar menos mecânico
+        fmod = f0 * (1 + 0.01 * np.sin(2 * np.pi * 3.1 * t + rng.uniform(0, 6)))
+        fase = 2 * np.pi * np.cumsum(fmod) / SR
+        # modulação de amplitude lenta (presença/ausência do grilo)
+        presenca = 0.55 + 0.45 * np.sin(2 * np.pi * 0.09 * t + rng.uniform(0, 6))
+        presenca = np.clip(presenca, 0, 1)
+        saida += np.sin(fase) * env_pulso * ganho * presenca
+
+    # Leito discreto de rumor noturno
+    leito = rng.normal(0, 1, n)
+    kernel = np.ones(180) / 180
+    saida += np.convolve(leito, kernel, mode="same") * 0.008
+    return saida, duracao
+
+
+def gerar_trovoada(duracao=9.0):
+    """Trovoada distante: rumores graves lentos sobre rumored contínuo."""
+    n = int(duracao * SR)
+    rng = np.random.default_rng(33)
+    ruido = rng.normal(0, 1, n)
+    kernel = np.ones(900) / 900
+    base = np.convolve(ruido, kernel, mode="same") * 0.35
+
+    # Duas vagas de trovão (envelope lento) em momentos fixos
+    t = np.arange(n) / SR
+    def vaga(t0, dur, ganho):
+        env = np.zeros_like(t)
+        m = (t >= t0) & (t < t0 + dur)
+        tt = (t[m] - t0) / dur
+        env[m] = np.sin(np.pi * tt) ** 2 * np.exp(-tt * 1.2) * ganho
+        return env
+    saida = base + ruido * 0.0  # placeholder para clareza
+    saida = base.copy()
+    saida += base * vaga(1.2, 2.6, 3.5)
+    saida += base * vaga(5.4, 2.2, 2.8)
+    return saida, duracao
+
+
 if __name__ == "__main__":
     os.makedirs(PASTA, exist_ok=True)
     for nome, (dados, dur) in [
         ("aves.wav", gerar_aves()),
         ("agua.wav", gerar_agua()),
         ("vento.wav", gerar_vento()),
+        ("grilos.wav", gerar_grilos()),
+        ("trovoada.wav", gerar_trovoada()),
     ]:
         salvar(nome, dados, dur)
     print("Concluído.")

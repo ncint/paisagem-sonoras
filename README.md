@@ -1,14 +1,17 @@
 # Paisagens Sonoras
 
 Instrumento musical interativo por webcam: objetos **vermelhos**,
-**verdes** e **azuis** colocados sobre uma mesa ativam paisagens
-sonoras naturais — aves, água e vento. A posição vertical do objeto no
+**verdes**, **azuis**, **amarelos** e **pretos** colocados sobre uma
+mesa ativam paisagens sonoras naturais — aves, água, vento, grilos e
+trovoada distante. A posição vertical do objeto no
 enquadramento controla a intensidade do som: no topo da imagem é mais
 intenso; no fundo (perto de quem usa), mais suave.
 
 - Vermelho → **aves**
 - Verde → **água**
 - Azul → **vento**
+- Amarelo → **grilos**
+- Preto → **trovoada distante**
 
 A aplicação funciona inteiramente no navegador: o vídeo nunca é
 enviado para nenhum servidor. Não requer instalação nem contas.
@@ -28,6 +31,8 @@ js/audio.js           Motor Web Audio (loops com fades suaves)
 audio/aves.wav        Som de aves (provisório, sintetizado)
 audio/agua.wav        Som de água (provisório, sintetizado)
 audio/vento.wav       Som de vento (provisório, sintetizado)
+audio/grilos.wav      Som de grilos (provisório, sintetizado)
+audio/trovoada.wav    Som de trovoada distante (provisório, sintetizado)
 audio/LICENCA-E-FONTES.md   Estado e critérios de licenciamento dos sons
 ferramentas/gerar_audios.py  Script que regenera os sons provisórios
 ferramentas/teste-deteccao.mjs  Testes automatizados da lógica de deteção

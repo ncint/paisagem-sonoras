@@ -19,12 +19,16 @@ const indicadores = {
   vermelho: document.getElementById('ind-aves'),
   verde: document.getElementById('ind-agua'),
   azul: document.getElementById('ind-vento'),
+  amarelo: document.getElementById('ind-grilos'),
+  preto: document.getElementById('ind-trovoada'),
 };
 
 const NOMES_ELEMENTO = {
   vermelho: 'aves',
   verde: 'água',
   azul: 'vento',
+  amarelo: 'grilos',
+  preto: 'trovoada',
 };
 
 // ---------- Estado ----------
@@ -81,6 +85,8 @@ function desenharDeteccao(res) {
       vermelho: 'rgba(201, 79, 61, 0.85)',
       verde: 'rgba(76, 140, 74, 0.85)',
       azul: 'rgba(74, 127, 181, 0.85)',
+      amarelo: 'rgba(212, 172, 43, 0.85)',
+      preto: 'rgba(40, 40, 40, 0.9)',
     }[chave];
 
     // Marcador horizontal na altura média do objeto (que controla a

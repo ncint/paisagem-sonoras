@@ -8,6 +8,8 @@
   --vermelho: #c94f3d;
   --verde: #4c8c4a;
   --azul: #4a7fb5;
+  --amarelo: #d4ac2b;
+  --preto: #2b2b2b;
   --inativo: #b9b4a9;
   --tempo-transicao: 0.4s;
 }
@@ -160,6 +162,18 @@ body {
   box-shadow: 0 0 10px rgba(74, 127, 181, 0.35);
 }
 .indicador.azul.ativo .ponto { background: var(--azul); }
+
+.indicador.amarelo.ativo {
+  border-color: var(--amarelo);
+  box-shadow: 0 0 10px rgba(212, 172, 43, 0.35);
+}
+.indicador.amarelo.ativo .ponto { background: var(--amarelo); }
+
+.indicador.preto.ativo {
+  border-color: var(--preto);
+  box-shadow: 0 0 10px rgba(43, 43, 43, 0.45);
+}
+.indicador.preto.ativo .ponto { background: var(--preto); }
 
 /* ---------- Ajustes ---------- */
 

@@ -13,6 +13,8 @@ apresentados como gravações reais da natureza.
 | aves.wav     | Vermelho | Chilreios sintéticos sobre leito de ruído suave | 9 s | WAV mono 16-bit 44,1 kHz |
 | agua.wav     | Verde    | Ruído filtrado modulado com "gotas" sintéticas | 9 s | WAV mono 16-bit 44,1 kHz |
 | vento.wav    | Azul     | Ruído grave com rajadas lentas sintéticas | 9 s | WAV mono 16-bit 44,1 kHz |
+| grilos.wav   | Amarelo  | Pulsos rítmicos agudos sintéticos (provisório) | 9 s | WAV mono 16-bit 44,1 kHz |
+| trovoada.wav  | Preto    | Rumores graves lentos sintéticos (provisório) | 9 s | WAV mono 16-bit 44,1 kHz |
 
 Os ficheiros foram gerados pelo script `ferramentas/gerar_audios.py`,
 incluído no projeto, e podem ser regenerados em qualquer altura.
