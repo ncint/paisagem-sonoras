@@ -41,7 +41,8 @@ Registra o resultado de cada teste numa coluna à direita.
 | 18 | Panorâmica estéreo | Com colunas estéreo, mover um objeto da esquerda para a direita | O som desloca-se entre as colunas esquerda e direita | ☐ | |
 | 19 | Pico de volume | Ativar os cinco sons simultaneamente no volume máximo | A mistura fica cheia mas sem distorção audível | ☐ | |
 | 20 | Sinalização no ecrã | Colocar um objeto no ecrã e movê-lo: para cima/baixo e esquerda/direita | Surge um contorno à volta do objeto com duas setas: a vertical cresce e aponta para cima ao subir o objeto (volume); a horizontal aponta para o lado onde o objeto está (panorâmica) | ☐ | |
-| 21 | Moldura-guia | Com o instrumento ativo, observar as bordas do vídeo | Aparecem etiquetas nas bordas: topo «▲ volume +», fundo «▼ volume −», lados «◀/▶ panorâmica»; desaparecem ao parar o instrumento | ☐ | |
+| 21 | Barras-guia | Com o instrumento ativo, mover um objeto para cima/baixo e esquerda/direita | A barra vertical à esquerda enche quando o objeto sobe (volume); o marcador da barra em baixo desliza para o lado do objeto (panorâmica); desaparecem ao parar | ☐ | |
+| 22 | Ecrã inteiro (PC) | Clicar «⤢ Ecrã inteiro» e voltar a clicar (ou Esc) | A imagem do vídeo ocupa o ecrã todo, com as deteções e barras-guia visíveis; Esc sai do modo | ☐ | |
 
 ## Estado dos testes (para preencher)
 
