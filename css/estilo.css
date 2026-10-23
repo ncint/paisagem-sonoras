@@ -117,15 +117,14 @@ body {
   pointer-events: none;
 }
 
-/* ---------- Moldura-guia (instruções de controlo sobre o vídeo) ---------- */
+/* ---------- Barras-guia de controlo sobre o vídeo ---------- */
 
 .moldura-guia {
   position: absolute;
   inset: 0;
   pointer-events: none;
   display: none;
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.92);
+  color: rgba(255, 255, 255, 0.9);
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 }
 
@@ -133,61 +132,126 @@ body {
   display: block;
 }
 
-.guia-topo,
-.guia-fundo,
-.guia-esquerda,
-.guia-direita {
+/* Volume: barra vertical encostada ao lado esquerdo */
+
+.barra-volume {
   position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.35rem 0.55rem;
-  border-radius: 8px;
+  gap: 0.3rem;
+  padding: 0.45rem 0.3rem;
+  border-radius: 10px;
   background: rgba(22, 24, 28, 0.55);
   backdrop-filter: blur(2px);
 }
 
-.guia-topo {
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  flex-direction: column;
-  gap: 0.1rem;
+.barra-traco.vertical {
+  position: relative;
+  width: 4px;
+  height: 46px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.25);
 }
 
-.guia-fundo {
+/* Preenchimento do nível: cresce de baixo (−) para cima (+) */
+
+.barra-preenchimento.vertical {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 0%;
+  border-radius: 2px;
+  background: var(--amarelo, #d4ac2b);
+}
+
+/* Panorâmica: barra horizontal em baixo */
+
+.barra-pan {
+  position: absolute;
   bottom: 10px;
   left: 50%;
   transform: translateX(-50%);
-  flex-direction: column;
-  gap: 0.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.55rem;
+  border-radius: 10px;
+  background: rgba(22, 24, 28, 0.55);
+  backdrop-filter: blur(2px);
 }
 
-.guia-esquerda {
-  left: 10px;
+.barra-traco.horizontal {
+  position: relative;
+  width: 46px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Marcador da panorâmica: desliza entre ◀ e ▶ */
+
+.barra-marcador {
+  position: absolute;
   top: 50%;
-  transform: translateY(-50%);
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--azul, #4a7fb5);
+  transform: translate(-50%, -50%);
 }
 
-.guia-direita {
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.guia-seta {
-  font-size: 0.9rem;
+.barra-etiqueta {
+  font-size: 0.75rem;
   line-height: 1;
 }
 
-.guia-topo .guia-seta,
-.guia-fundo .guia-seta {
+.barra-volume .barra-etiqueta {
   color: var(--amarelo, #d4ac2b);
 }
 
-.guia-esquerda .guia-seta,
-.guia-direita .guia-seta {
+.barra-pan .barra-etiqueta {
   color: var(--azul, #4a7fb5);
+}
+
+/* ---------- Botão de ecrã inteiro ---------- */
+
+.botao-tela-cheia {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  z-index: 5;
+  border: none;
+  border-radius: 8px;
+  padding: 0.4rem 0.7rem;
+  font: inherit;
+  font-size: 0.85rem;
+  color: #fff;
+  background: rgba(22, 24, 28, 0.7);
+  cursor: pointer;
+  backdrop-filter: blur(2px);
+}
+
+.botao-tela-cheia:hover {
+  background: rgba(60, 64, 72, 0.85);
+}
+
+/* Em ecrã inteiro, o painel de vídeo ocupa todo o ecrã */
+
+.painel-video:fullscreen {
+  aspect-ratio: auto;
+  border-radius: 0;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .botao-tela-cheia {
+    display: none; /* tablets: o botão de ecrã inteiro é do navegador */
+  }
 }
 
 /* ---------- Mensagens de estado ---------- */

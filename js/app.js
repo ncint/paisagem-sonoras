@@ -15,6 +15,10 @@ const volumeValor = document.getElementById('volume-valor');
 const sensibilidadeInput = document.getElementById('sensibilidade');
 const sensibilidadeValor = document.getElementById('sensibilidade-valor');
 const molduraGuia = document.getElementById('moldura-guia');
+const botaoTelaCheia = document.getElementById('botao-tela-cheia');
+const painelVideo = document.querySelector('.painel-video');
+const preenchimentoVolume = document.getElementById('preenchimento-volume');
+const marcadorPan = document.getElementById('marcador-pan');
 
 const indicadores = {
   vermelho: document.getElementById('ind-aves'),
@@ -50,6 +54,25 @@ let ultimaAnalise = 0;
 function cancelado(id) {
   return id !== pedidoId;
 }
+
+// ---------- Ecrã inteiro (para projetar) ----------
+
+// O painel de vídeo (não apenas o <video>) entra em ecrã inteiro:
+// assim o canvas das deteções e as barras-guia acompanham.
+function alternarTelaCheia() {
+  if (document.fullscreenElement) {
+    document.exitFullscreen();
+    return;
+  }
+  if (painelVideo.requestFullscreen) {
+    painelVideo.requestFullscreen();
+  } else if (painelVideo.webkitRequestFullscreen) {
+    // Safari antigo
+    painelVideo.webkitRequestFullscreen();
+  }
+}
+
+botaoTelaCheia.addEventListener('click', alternarTelaCheia);
 
 // ---------- Utilitários ----------
 
@@ -210,6 +233,26 @@ function atualizarIndicadores(cores) {
   }
 }
 
+// ---------- Barras-guia (volume e panorâmica) ----------
+
+// A barra de volume mostra a intensidade do objeto presente mais
+// intenso; a da panorâmica mostra a posição horizontal do objeto
+// presente mais intenso. Sem objetos, o volume esvazia e o marcador
+// regressa ao centro.
+function atualizarBarrasGuia(cores) {
+  let melhorIntensidade = 0;
+  let melhorPosX = 0.5;
+  for (const info of Object.values(cores)) {
+    if (info.presente && info.intensidade > melhorIntensidade) {
+      melhorIntensidade = info.intensidade;
+      melhorPosX = info.posX;
+    }
+  }
+  preenchimentoVolume.style.height = `${Math.round(melhorIntensidade * 100)}%`;
+  const deslocamento = Math.max(-1, Math.min(1, (melhorPosX - 0.5) * 2)); // -1 a 1
+  marcadorPan.style.left = `${50 + deslocamento * 40}%`;
+}
+
 // ---------- Loop principal ----------
 
 function passo(agora) {
@@ -224,6 +267,7 @@ function passo(agora) {
     if (resultado) {
       desenharDeteccao(resultado);
       atualizarIndicadores(resultado.cores);
+      atualizarBarrasGuia(resultado.cores);
       if (motorAudio.pronto) {
         for (const [chave, info] of Object.entries(resultado.cores)) {
           motorAudio.definirIntensidade(chave, info.intensidade);
@@ -320,6 +364,8 @@ function parar() {
   limparTransmissao();
 
   molduraGuia.classList.remove('visivel');
+  preenchimentoVolume.style.height = '0%';
+  marcadorPan.style.left = '50%';
   ctxCanvas.clearRect(0, 0, canvasDetecao.width, canvasDetecao.height);
   for (const el of Object.values(indicadores)) {
     el.classList.remove('ativo');
