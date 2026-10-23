@@ -415,6 +415,12 @@ body {
 .indicador.amarelo.ativo .chip { background: var(--amarelo); }
 .indicador.preto.ativo { border-color: var(--preto); }
 .indicador.preto.ativo .chip { background: var(--preto); }
+.indicador.laranja.ativo { border-color: #e67e22; }
+.indicador.laranja.ativo .chip { background: #e67e22; }
+.indicador.castanho.ativo { border-color: #8b5a2b; }
+.indicador.castanho.ativo .chip { background: #8b5a2b; }
+.indicador.roxo.ativo { border-color: #8e44ad; }
+.indicador.roxo.ativo .chip { background: #8e44ad; }
 
 /* ---------- Ajustes ---------- */
 

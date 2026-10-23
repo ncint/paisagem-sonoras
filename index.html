@@ -13,8 +13,10 @@
       <h1>Paisagens Sonoras</h1>
       <p class="intro">
         Coloca objetos <strong>vermelhos</strong>, <strong>verdes</strong>, <strong>azuis</strong>,
-        <strong>amarelos</strong> e <strong>pretos</strong> sobre a mesa em frente à câmara.
-        Cada cor ativa um som da natureza — aves, água, vento, grilos, trovoada distante.
+        <strong>amarelos</strong>, <strong>pretos</strong>, <strong>laranjas</strong>,
+        <strong>castanhos</strong> e <strong>roxos</strong> sobre a mesa em frente à câmara.
+        Cada cor ativa um som da natureza — aves, água, vento, grilos, trovoada distante,
+        galo, chuva e cão.
         A altura do objeto no ecrã controla a intensidade: topo da imagem, som mais
         presente; fundo, mais suave. A posição horizontal move o som no espaço estéreo
         (esquerda/direita). Cada objeto detetado é sinalizado com um contorno e duas
@@ -115,6 +117,39 @@
               <button type="button" class="acao ouvir" data-chave="preto" title="Ouvir este som">Ouvir</button>
               <label class="acao carregar" title="Substituir o som deste elemento por um ficheiro de áudio do teu computador (MP3, WAV, OGG). Voltam os sons originais ao recarregar a página.">Trocar som
                 <input type="file" accept="audio/*" data-chave="preto" hidden>
+              </label>
+            </span>
+            <span class="estado">—</span>
+          </div>
+          <div class="indicador laranja" id="ind-galo">
+            <span class="chip" aria-hidden="true"></span>
+            <span class="rotulo">Galo</span>
+            <span class="acoes">
+              <button type="button" class="acao ouvir" data-chave="laranja" title="Ouvir este som">Ouvir</button>
+              <label class="acao carregar" title="Substituir o som deste elemento por um ficheiro de áudio do teu computador (MP3, WAV, OGG). Voltam os sons originais ao recarregar a página.">Trocar som
+                <input type="file" accept="audio/*" data-chave="laranja" hidden>
+              </label>
+            </span>
+            <span class="estado">—</span>
+          </div>
+          <div class="indicador castanho" id="ind-chuva">
+            <span class="chip" aria-hidden="true"></span>
+            <span class="rotulo">Chuva</span>
+            <span class="acoes">
+              <button type="button" class="acao ouvir" data-chave="castanho" title="Ouvir este som">Ouvir</button>
+              <label class="acao carregar" title="Substituir o som deste elemento por um ficheiro de áudio do teu computador (MP3, WAV, OGG). Voltam os sons originais ao recarregar a página.">Trocar som
+                <input type="file" accept="audio/*" data-chave="castanho" hidden>
+              </label>
+            </span>
+            <span class="estado">—</span>
+          </div>
+          <div class="indicador roxo" id="ind-cao">
+            <span class="chip" aria-hidden="true"></span>
+            <span class="rotulo">Cão</span>
+            <span class="acoes">
+              <button type="button" class="acao ouvir" data-chave="roxo" title="Ouvir este som">Ouvir</button>
+              <label class="acao carregar" title="Substituir o som deste elemento por um ficheiro de áudio do teu computador (MP3, WAV, OGG). Voltam os sons originais ao recarregar a página.">Trocar som
+                <input type="file" accept="audio/*" data-chave="roxo" hidden>
               </label>
             </span>
             <span class="estado">—</span>

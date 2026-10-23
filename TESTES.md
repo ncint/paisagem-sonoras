@@ -9,9 +9,11 @@ Registra o resultado de cada teste numa coluna à direita.
   Firefox ou Safari recentes) e webcam integrada.
 - **Mesa forrada com papel branco** (ou uma parede branca como fundo)
   — configuração recomendada: o branco é ignorado pela deteção.
-- Cinco objetos coloridos: **vermelho**, **verde**, **azul**,
-  **amarelo** e **preto**, com cores vivas (tampas de garrafa,
-  cartolina, blocos).
+- Oito objetos coloridos: **vermelho**, **verde**, **azul**,
+  **amarelo**, **preto**, **laranja**, **castanho** e **roxo**, com
+  cores vivas (tampas de garrafa, cartolina, blocos). O laranja tem
+  de ser vivo e claro; o castanho, escuro e forte (ex.: cartolina
+  castanha) — a diferença entre eles é o brilho.
 - Mesa iluminada de forma uniforme, sem sombras fortes.
 - Colunas ou auscultores ligados.
 
@@ -29,6 +31,10 @@ Registra o resultado de cada teste numa coluna à direita.
 | 8 | Coexistência | Colocar os cinco objetos em simultâneo | Os cinco indicadores ficam ativos e os sons ouvem-se misturados | ☐ | |
 | 8b | Detecção do amarelo | Colocar só o objeto amarelo na mesa | O indicador «Grilos» fica ativo e ouve-se o som de grilos | ☐ | |
 | 8c | Detecção do preto | Colocar só o objeto preto na mesa | O indicador «Trovoada» fica ativo e ouve-se o som de trovoada | ☐ | |
+| 8d | Detecção do laranja | Colocar só o objeto laranja vivo na mesa | O indicador «Galo» fica ativo (sem ativar «Chuva») | ☐ | |
+| 8e | Detecção do castanho | Colocar só o objeto castanho escuro na mesa | O indicador «Chuva» fica ativo (sem ativar «Galo») | ☐ | |
+| 8f | Detecção do roxo | Colocar só o objeto roxo na mesa | O indicador «Cão» fica ativo | ☐ | |
+| 8g | Laranja vs. castanho | Colocar o laranja vivo e o castanho escuro em simultâneo | «Galo» e «Chuva» ficam ativos cada um com o seu objeto; a mão (pele) não ativa nenhum deles | ☐ | |
 | 9 | Posição vertical | Mover um objeto devagar do fundo da imagem para o topo | O som fica mais intenso no topo e mais suave no fundo (perto de ti), sem saltos abruptos | ☐ | |
 | 10 | Retirar objeto | Retirar um objeto do enquadramento | O som desse elemento desliga-se gradualmente (cerca de meio segundo), sem corte seco | ☐ | |
 | 11 | Volume geral | Mexer o cursor «Volume geral» | O volume total muda imediatamente | ☐ | |

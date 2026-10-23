@@ -20,6 +20,9 @@ emenda de loop com crossfade equal-power de 60 ms + micro-fade de
 | vento.wav      | Azul — Vento | Vento em floresta | Gravity Sound, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Wind_in_forest_(Gravity_Sound).wav) | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0) | Sim: crédito ao autor + link da licença |
 | grilos.wav     | Amarelo — Grilos | Grilo-arborícola (Oecanthus pellucens) | Olivier Grimm, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Oecanthus_pellucens_-_Tree_Cricket_XC558882.mp3) (original: Xeno-canto XC558882) | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) | Sim: crédito ao autor + link da licença |
 | trovoada.wav   | Preto — Trovoada | Trovoada | Amuzujoe, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Thunder_01.ogg) | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) | Sim: crédito ao autor + link da licença |
+| galo.wav       | Laranja — Galo | PROVISÓRIO: sintetizado | — | — | Substituir por gravação real licenciada |
+| chuva.wav      | Castanho — Chuva | PROVISÓRIO: sintetizado | — | — | Substituir por gravação real licenciada |
+| cao.wav        | Roxo — Cão | PROVISÓRIO: sintetizado | — | — | Substituir por gravação real licenciada |
 
 ## Cumprimento das licenças
 

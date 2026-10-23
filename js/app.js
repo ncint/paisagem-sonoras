@@ -26,6 +26,9 @@ const indicadores = {
   azul: document.getElementById('ind-vento'),
   amarelo: document.getElementById('ind-grilos'),
   preto: document.getElementById('ind-trovoada'),
+  laranja: document.getElementById('ind-galo'),
+  castanho: document.getElementById('ind-chuva'),
+  roxo: document.getElementById('ind-cao'),
 };
 
 const NOMES_ELEMENTO = {
@@ -34,6 +37,9 @@ const NOMES_ELEMENTO = {
   azul: 'vento',
   amarelo: 'grilos',
   preto: 'trovoada',
+  laranja: 'galo',
+  castanho: 'chuva',
+  roxo: 'cão',
 };
 
 // ---------- Estado ----------
@@ -108,6 +114,9 @@ const CORES_MASCARA = {
   azul: [74, 127, 181],
   amarelo: [212, 172, 43],
   preto: [40, 40, 40],
+  laranja: [230, 126, 34],
+  castanho: [121, 68, 35],
+  roxo: [142, 68, 173],
 };
 
 function desenharDeteccao(res) {
@@ -175,6 +184,9 @@ function desenharDeteccao(res) {
       azul: 'rgba(74, 127, 181, 0.95)',
       amarelo: 'rgba(212, 172, 43, 0.95)',
       preto: 'rgba(20, 20, 20, 0.95)',
+      laranja: 'rgba(230, 126, 34, 0.95)',
+      castanho: 'rgba(121, 68, 35, 0.95)',
+      roxo: 'rgba(142, 68, 173, 0.95)',
     }[chave];
     const corContorno = {
       vermelho: '#c94f3d',
@@ -182,6 +194,9 @@ function desenharDeteccao(res) {
       azul: '#4a7fb5',
       amarelo: '#d4ac2b',
       preto: '#141414',
+      laranja: '#e67e22',
+      castanho: '#794423',
+      roxo: '#8e44ad',
     }[chave];
 
     // Retângulo em volta do objeto detetado (caixa delimitadora da
