@@ -113,6 +113,10 @@ export class DeteccaoCores {
     const contadores = {};
     const somaX = {};
     const somaY = {};
+    // Caixa delimitadora por cor (minX, minY, maxX, maxY em píxeis da
+    // análise): permite sinalizar o objeto em si no ecrã, e não apenas
+    // a sua posição média.
+    const caixas = {};
 
     // Lista de [chave, gamas, limiarExtra] pré-computada uma única vez
     if (!this._alvos) {
@@ -128,11 +132,13 @@ export class DeteccaoCores {
       contadores[chave] = 0;
       somaX[chave] = 0;
       somaY[chave] = 0;
+      caixas[chave] = [Infinity, Infinity, -Infinity, -Infinity];
     }
     for (const chave of this._chavesEscuras) {
       contadores[chave] = 0;
       somaX[chave] = 0;
       somaY[chave] = 0;
+      caixas[chave] = [Infinity, Infinity, -Infinity, -Infinity];
     }
 
     // Limiares do preto. Testado ANTES da classificação por matiz:
@@ -172,6 +178,13 @@ export class DeteccaoCores {
         const chave = escuras[0];
         contadores[chave]++;
         mascaras[chave][p] = 1;
+        const cx = p % this.largura;
+        const cy = (p - cx) / this.largura;
+        const caixa = caixas[chave];
+        if (cx < caixa[0]) caixa[0] = cx;
+        if (cy < caixa[1]) caixa[1] = cy;
+        if (cx > caixa[2]) caixa[2] = cx;
+        if (cy > caixa[3]) caixa[3] = cy;
         somaX[chave] += p % this.largura;
         somaY[chave] += Math.floor(p / this.largura);
         continue;
@@ -188,8 +201,15 @@ export class DeteccaoCores {
             const chave = alvos[a][0];
             contadores[chave]++;
             mascaras[chave][p] = 1;
-            somaX[chave] += p % this.largura;
-            somaY[chave] += Math.floor(p / this.largura);
+            const cx = p % this.largura;
+            const cy = (p - cx) / this.largura;
+            somaX[chave] += cx;
+            somaY[chave] += cy;
+            const caixa = caixas[chave];
+            if (cx < caixa[0]) caixa[0] = cx;
+            if (cy < caixa[1]) caixa[1] = cy;
+            if (cx > caixa[2]) caixa[2] = cx;
+            if (cy > caixa[3]) caixa[3] = cy;
             break;
           }
         }
@@ -225,9 +245,18 @@ export class DeteccaoCores {
       // Posições médias (0 = topo/esquerda, 1 = fundo/direita)
       let posXBruto = null;
       let posY = null;
+      // Caixa delimitadora normalizada (0-1) ou null sem píxeis
+      let caixa = null;
       if (contadores[chave] > 0) {
         posXBruto = (somaX[chave] / contadores[chave]) / this.largura;
         posY = (somaY[chave] / contadores[chave]) / alturaAnalise;
+        const c = caixas[chave];
+        caixa = {
+          x0: c[0] / this.largura,
+          y0: c[1] / alturaAnalise,
+          x1: (c[2] + 1) / this.largura,
+          y1: (c[3] + 1) / alturaAnalise,
+        };
       }
 
       // Posição horizontal suavizada (para a panorâmica estéreo):
@@ -255,6 +284,7 @@ export class DeteccaoCores {
         area: fracArea,
         posX,
         posY,
+        caixa,
         intensidade: this.intensidade[chave],
         mascara: mascaras[chave],
       };

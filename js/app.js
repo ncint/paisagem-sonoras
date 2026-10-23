@@ -122,28 +122,76 @@ function desenharDeteccao(res) {
   ctxCanvas.imageSmoothingEnabled = false; // blocos nítidos, sem borrão
   ctxCanvas.drawImage(canvasMascara, offsetX, offsetY, larguraVisivel, alturaVisivel);
 
+  // Desenha uma seta triangular (ponta em (x, y), comprimento len,
+  // direção dada por dx/dy normalizados, largura proporcional).
+  function desenharSeta(x, y, dx, dy, len, largura, cor) {
+    const px = -dy, py = dx; // perpendicular
+    const bx = x - dx * len, by = y - dy * len;
+    ctxCanvas.beginPath();
+    ctxCanvas.moveTo(x, y);
+    ctxCanvas.lineTo(bx + px * largura, by + py * largura);
+    ctxCanvas.lineTo(bx - px * largura, by - py * largura);
+    ctxCanvas.closePath();
+    ctxCanvas.fillStyle = cor;
+    ctxCanvas.fill();
+  }
+
   for (const [chave, info] of Object.entries(res.cores)) {
-    if (!info.presente || info.posY === null) continue;
+    if (!info.presente || !info.caixa) continue;
     const cor = {
-      vermelho: 'rgba(201, 79, 61, 0.85)',
-      verde: 'rgba(76, 140, 74, 0.85)',
-      azul: 'rgba(74, 127, 181, 0.85)',
-      amarelo: 'rgba(212, 172, 43, 0.85)',
-      preto: 'rgba(40, 40, 40, 0.9)',
+      vermelho: 'rgba(201, 79, 61, 0.95)',
+      verde: 'rgba(76, 140, 74, 0.95)',
+      azul: 'rgba(74, 127, 181, 0.95)',
+      amarelo: 'rgba(212, 172, 43, 0.95)',
+      preto: 'rgba(20, 20, 20, 0.95)',
+    }[chave];
+    const corContorno = {
+      vermelho: '#c94f3d',
+      verde: '#4c8c4a',
+      azul: '#4a7fb5',
+      amarelo: '#d4ac2b',
+      preto: '#141414',
     }[chave];
 
-    // Marcador horizontal na altura média do objeto (que controla a
-    // intensidade): fundo da imagem = mais intenso.
-    const y = info.posY * alturaVisivel + offsetY;
-    ctxCanvas.fillStyle = cor;
-    ctxCanvas.fillRect(0, y - 2, larguraPx, 4);
+    // Retângulo em volta do objeto detetado (caixa delimitadora da
+    // máscara), mapeado para a área visível do vídeo.
+    const cx0 = info.caixa.x0 * larguraVisivel + offsetX;
+    const cy0 = info.caixa.y0 * alturaVisivel + offsetY;
+    const cx1 = info.caixa.x1 * larguraVisivel + offsetX;
+    const cy1 = info.caixa.y1 * alturaVisivel + offsetY;
+    const centroX = (cx0 + cx1) / 2;
+    const centroY = (cy0 + cy1) / 2;
 
-    // Etiqueta junto ao marcador, sem sair da imagem
+    ctxCanvas.strokeStyle = corContorno;
+    ctxCanvas.lineWidth = 3;
+    ctxCanvas.strokeRect(cx0, cy0, cx1 - cx0, cy1 - cy0);
+
+    // Seta vertical: aponta para CIMA (o volume sobe quando o objeto
+    // está mais acima); o comprimento é proporcional à intensidade.
+    const lenVol = 18 + 30 * info.intensidade;
+    desenharSeta(centroX, cy0 - 8, 0, -1, lenVol, 7, cor);
+
+    // Seta horizontal: aponta para o lado onde o objeto está no campo
+    // estéreo (panoramica); esquerda se posX < 0.5, direita se > 0.5.
+    const paraDireita = info.posX >= 0.5;
+    const lenPan = 14 + 26 * Math.abs(info.posX - 0.5) * 2;
+    desenharSeta(
+      paraDireita ? cx1 + 8 : cx0 - 8,
+      centroY,
+      paraDireita ? 1 : -1,
+      0,
+      lenPan,
+      6,
+      cor
+    );
+
+    // Etiqueta do elemento, junto ao canto superior do retângulo
     ctxCanvas.font = 'bold 16px sans-serif';
     const rotulo = NOMES_ELEMENTO[chave];
     const larguraTexto = ctxCanvas.measureText(rotulo).width;
-    const etiqX = Math.min(Math.max(offsetX + 8, 8), Math.max(larguraPx - larguraTexto - 16, 8));
-    const etiqY = Math.min(Math.max(y - 34, 4), Math.max(alturaPx - 30, 4));
+    const etiqX = Math.min(Math.max(cx0, 8), Math.max(larguraPx - larguraTexto - 16, 8));
+    const etiqY = Math.min(Math.max(cy0 - 34, 4), Math.max(alturaPx - 30, 4));
+    ctxCanvas.fillStyle = cor;
     ctxCanvas.fillRect(etiqX, etiqY, larguraTexto + 12, 26);
     ctxCanvas.fillStyle = '#fff';
     ctxCanvas.fillText(rotulo, etiqX + 6, etiqY + 19);
