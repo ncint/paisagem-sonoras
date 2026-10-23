@@ -40,6 +40,12 @@ let requestHandle = null; // id do loop de animação
 let aCorrer = false;
 let pedidoId = 0;         // distingue cada clique em «Iniciar»; permite cancelar
 
+// A análise de cor não ganha nada acima de ~30 fps, mas custa CPU em
+// cada frame. O loop continua a 60 fps (fluidez do vídeo), mas a
+// deteção só corre quando passaram estes ms desde a última análise.
+const INTERVALO_ANALISE_MS = 33;
+let ultimaAnalise = 0;
+
 function cancelado(id) {
   return id !== pedidoId;
 }
@@ -157,8 +163,11 @@ function atualizarIndicadores(cores) {
 
 // ---------- Loop principal ----------
 
-function passo() {
+function passo(agora) {
   if (!aCorrer) return;
+  requestHandle = requestAnimationFrame(passo);
+  if (agora - ultimaAnalise < INTERVALO_ANALISE_MS) return;
+  ultimaAnalise = agora;
   const sensibilidade = sensibilidadeInput.value / 100;
 
   if (video.readyState >= 2) {
@@ -174,7 +183,6 @@ function passo() {
       }
     }
   }
-  requestHandle = requestAnimationFrame(passo);
 }
 
 // ---------- Iniciar / parar ----------
@@ -202,9 +210,13 @@ async function iniciar() {
     await video.play();
 
     // O contexto de áudio só é criado dentro do clique (requisito dos navegadores)
+    let avisosFalhas = null;
     if (!motorAudio.pronto) {
       definirMensagem('A preparar os sons…');
-      await motorAudio.iniciar(volumeGeral.value / 100);
+      const { falhas } = await motorAudio.iniciar(volumeGeral.value / 100);
+      if (falhas) {
+        avisosFalhas = falhas.map((c) => `«${NOMES_ELEMENTO[c] || c}»`).join(', ');
+      }
     }
     if (cancelado(id)) {
       // O utilizador clicou «Parar» enquanto os sons carregavam
@@ -213,9 +225,14 @@ async function iniciar() {
       return;
     }
 
+    if (avisosFalhas) {
+      definirMensagem(`Instrumento ativo, mas não foi possível carregar o som de: ${avisosFalhas}. Verifica a ligação e recarrega a página.`);
+    } else {
+      definirMensagem('Instrumento ativo. Coloca os objetos coloridos na mesa e experimenta!');
+    }
+
     aCorrer = true;
     botaoParar.disabled = false;
-    definirMensagem('Instrumento ativo. Coloca os objetos coloridos na mesa e experimenta!');
     requestHandle = requestAnimationFrame(passo);
   } catch (erro) {
     console.error(erro);

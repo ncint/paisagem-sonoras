@@ -48,11 +48,12 @@ Registra o resultado de cada teste numa coluna à direita.
   executar.
 - Testes apenas planeados: todos os acima.
 
-## Problemas conhecidos da Fase 1
+## Problemas conhecidos
 
-- Os sons são provisórios e sintetizados (ver
-  `audio/LICENCA-E-FONTES.md`); a avaliação artística só faz sentido
-  depois de serem substituídos por gravações reais.
+- Os cinco sons são gravações de campo reais licenciadas
+  (ver `audio/LICENCA-E-FONTES.md`); se um ficheiro de áudio falhar
+  ao carregar, os restantes continuam a funcionar e a página indica
+  qual elemento ficou sem som.
 - Objetos com cores pouco saturadas (por exemplo, pastéis ou tecidos
   escuros) podem não ser detetados; usar cores vivas.
 - Roupas ou fundos com as cores alvo podem provocar falsos positivos;
