@@ -14,6 +14,7 @@ const volumeGeral = document.getElementById('volume-geral');
 const volumeValor = document.getElementById('volume-valor');
 const sensibilidadeInput = document.getElementById('sensibilidade');
 const sensibilidadeValor = document.getElementById('sensibilidade-valor');
+const molduraGuia = document.getElementById('moldura-guia');
 
 const indicadores = {
   vermelho: document.getElementById('ind-aves'),
@@ -281,6 +282,7 @@ async function iniciar() {
 
     aCorrer = true;
     botaoParar.disabled = false;
+    molduraGuia.classList.add('visivel');
     requestHandle = requestAnimationFrame(passo);
   } catch (erro) {
     console.error(erro);
@@ -317,6 +319,7 @@ function parar() {
   motorAudio.parar();
   limparTransmissao();
 
+  molduraGuia.classList.remove('visivel');
   ctxCanvas.clearRect(0, 0, canvasDetecao.width, canvasDetecao.height);
   for (const el of Object.values(indicadores)) {
     el.classList.remove('ativo');

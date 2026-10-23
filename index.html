@@ -19,7 +19,9 @@
         presente; fundo, mais suave. A posição horizontal move o som no espaço estéreo
         (esquerda/direita). Cada objeto detetado é sinalizado com um contorno e duas
         setas: a vertical indica o volume (para cima = mais alto), a horizontal indica
-        a panorâmica estéreo. Forra a mesa com papel branco: é ignorado pela deteção.
+        a panorâmica estéreo. Uma moldura no ecrã lembra os controlos: acima = mais
+        volume, abaixo = menos, esquerda/direita = panorâmica. Forra a mesa com papel
+        branco: é ignorado pela deteção.
       </p>
     </header>
 
@@ -28,6 +30,24 @@
         <div class="painel-video">
           <video id="video" playsinline muted aria-label="Imagem em direto da câmara sobre a mesa de trabalho"></video>
           <canvas id="canvas-deteccao" aria-hidden="true"></canvas>
+          <div id="moldura-guia" class="moldura-guia" aria-hidden="true">
+            <div class="guia-topo">
+              <span class="guia-seta">▲</span>
+              <span class="guia-texto">volume +</span>
+            </div>
+            <div class="guia-fundo">
+              <span class="guia-texto">volume −</span>
+              <span class="guia-seta">▼</span>
+            </div>
+            <div class="guia-esquerda">
+              <span class="guia-seta">◀</span>
+              <span class="guia-texto">panorâmica</span>
+            </div>
+            <div class="guia-direita">
+              <span class="guia-texto">panorâmica</span>
+              <span class="guia-seta">▶</span>
+            </div>
+          </div>
         </div>
 
         <p id="mensagem" class="mensagem" role="status" aria-live="polite">

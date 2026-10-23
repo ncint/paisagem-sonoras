@@ -117,6 +117,79 @@ body {
   pointer-events: none;
 }
 
+/* ---------- Moldura-guia (instruções de controlo sobre o vídeo) ---------- */
+
+.moldura-guia {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: none;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.moldura-guia.visivel {
+  display: block;
+}
+
+.guia-topo,
+.guia-fundo,
+.guia-esquerda,
+.guia-direita {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.55rem;
+  border-radius: 8px;
+  background: rgba(22, 24, 28, 0.55);
+  backdrop-filter: blur(2px);
+}
+
+.guia-topo {
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.guia-fundo {
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.guia-esquerda {
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.guia-direita {
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.guia-seta {
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.guia-topo .guia-seta,
+.guia-fundo .guia-seta {
+  color: var(--amarelo, #d4ac2b);
+}
+
+.guia-esquerda .guia-seta,
+.guia-direita .guia-seta {
+  color: var(--azul, #4a7fb5);
+}
+
 /* ---------- Mensagens de estado ---------- */
 
 .mensagem {
