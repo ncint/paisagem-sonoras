@@ -60,12 +60,19 @@ function cancelado(id) {
 // O painel de vídeo (não apenas o <video>) entra em ecrã inteiro:
 // assim o canvas das deteções e as barras-guia acompanham.
 function alternarTelaCheia() {
-  if (document.fullscreenElement) {
-    document.exitFullscreen();
+  const emEcraInteiro = document.fullscreenElement || document.webkitFullscreenElement;
+  if (emEcraInteiro) {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    }
     return;
   }
   if (painelVideo.requestFullscreen) {
-    painelVideo.requestFullscreen();
+    painelVideo.requestFullscreen().catch((erro) => {
+      definirMensagem(`Não foi possível entrar em ecrã inteiro: ${erro.message}`, true);
+    });
   } else if (painelVideo.webkitRequestFullscreen) {
     // Safari antigo
     painelVideo.webkitRequestFullscreen();
@@ -326,7 +333,7 @@ async function iniciar() {
 
     aCorrer = true;
     botaoParar.disabled = false;
-    molduraGuia.classList.add('visivel');
+    molduraGuia.classList.remove('oculta');
     requestHandle = requestAnimationFrame(passo);
   } catch (erro) {
     console.error(erro);
@@ -363,7 +370,7 @@ function parar() {
   motorAudio.parar();
   limparTransmissao();
 
-  molduraGuia.classList.remove('visivel');
+  molduraGuia.classList.add('oculta');
   preenchimentoVolume.style.height = '0%';
   marcadorPan.style.left = '50%';
   ctxCanvas.clearRect(0, 0, canvasDetecao.width, canvasDetecao.height);

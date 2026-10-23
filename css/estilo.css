@@ -123,13 +123,13 @@ body {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  display: none;
+  display: block;
   color: rgba(255, 255, 255, 0.9);
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 }
 
-.moldura-guia.visivel {
-  display: block;
+.moldura-guia.oculta {
+  display: none;
 }
 
 /* Volume: barra vertical encostada ao lado esquerdo */
@@ -246,6 +246,15 @@ body {
 .painel-video:fullscreen {
   aspect-ratio: auto;
   border-radius: 0;
+}
+
+/* Safari: o modo de ecrã inteiro usa o prefixo -webkit- */
+
+.painel-video:-webkit-full-screen {
+  aspect-ratio: auto;
+  border-radius: 0;
+  width: 100%;
+  height: 100%;
 }
 
 @media (hover: none) and (pointer: coarse) {
