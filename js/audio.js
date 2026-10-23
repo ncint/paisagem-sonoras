@@ -9,12 +9,19 @@ export class MotorAudio {
     this.ganhoGeral = null;
     this.canais = null;
     this.buffers = {};   // buffers por chave, para pré-escuta e substituição
-    this.aCarregar = 0;
   }
 
   // Garante um AudioContext (chamado a partir de um clique).
   async garantirContexto(volumeGeral = 0.7) {
-    if (this.ctx) return;
+    if (this.ctx) {
+      // Alguns navegadores suspendem o contexto a meio da sessão
+      // (política de autoplay); retomar aqui é inócuo se já estiver
+      // ativo e recupera o som se não estiver.
+      if (this.ctx.state === 'suspended') {
+        try { await this.ctx.resume(); } catch (e) { /* ignorar */ }
+      }
+      return;
+    }
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) {
       throw new Error('Este navegador não suporta a Web Audio API.');
@@ -95,10 +102,12 @@ export class MotorAudio {
     };
 
     this.canais = {};
-    this.aCarregar = Object.keys(ficheiros).length;
 
     try {
-      await Promise.all(Object.entries(ficheiros).map(async ([chave, url]) => {
+      // allSettled: um ficheiro que falhe não derruba os restantes —
+      // os canais que carregarem ficam tocáveis e as falhas são
+      // reportadas no fim, com o nome do elemento em causa.
+      const resultados = await Promise.allSettled(Object.entries(ficheiros).map(async ([chave, url]) => {
         // Se já existe um buffer para esta chave (som substituído pelo
         // utilizador numa sessão anterior, ou pré-carregado), é usado e
         // o ficheiro base não é descarregado de novo.
@@ -143,10 +152,29 @@ export class MotorAudio {
         origem.start();
 
         this.canais[chave] = { origem, ganho, filtro, pan };
-        this.aCarregar--;
       }));
+
+      const falhas = [];
+      for (let i = 0; i < resultados.length; i++) {
+        if (resultados[i].status === 'rejected') {
+          falhas.push(Object.keys(ficheiros)[i]);
+          console.error(`Som de «${Object.keys(ficheiros)[i]}»:`, resultados[i].reason);
+        }
+      }
+
+      if (falhas.length === Object.keys(ficheiros).length) {
+        // Nada carregou: não faz sentido manter o contexto aberto.
+        try { this.ctx.close(); } catch (e) { /* ignorar */ }
+        this.ctx = null;
+        this.canais = null;
+        throw new Error('Nenhum ficheiro de áudio pôde ser carregado.');
+      }
+      if (falhas.length > 0) {
+        return { falhas };
+      }
+      return { falhas: null };
     } catch (erro) {
-      // Se o carregamento falhar, fecha o contexto para não acumular
+      // Se nem o contexto pôde ser preparado, fecha-o para não acumular
       // contextos de áudio abertos em novas tentativas.
       try { this.ctx.close(); } catch (e) { /* ignorar */ }
       this.ctx = null;
@@ -198,9 +226,10 @@ export class MotorAudio {
   }
 
   get pronto() {
-    // Pronto exige os loops criados (canais), não apenas o contexto:
+    // Pronto exige loops criados (canais), não apenas o contexto:
     // «Ouvir» cria o contexto antes dos loops e não deve fazer o
     // instrumento parecer iniciado.
-    return this.ctx !== null && this.canais !== null && this.aCarregar === 0;
+    return this.ctx !== null && this.canais !== null
+      && Object.keys(this.canais).length > 0;
   }
 }

@@ -40,6 +40,8 @@ Registra o resultado de cada teste numa coluna à direita.
 | 17 | Sombra (preto) | Fazer sombra com a mão sobre o papel branco, sem objeto preto | A trovoada NÃO dispara com a sombra | ☐ | |
 | 18 | Panorâmica estéreo | Com colunas estéreo, mover um objeto da esquerda para a direita | O som desloca-se entre as colunas esquerda e direita | ☐ | |
 | 19 | Pico de volume | Ativar os cinco sons simultaneamente no volume máximo | A mistura fica cheia mas sem distorção audível | ☐ | |
+| 20 | Sinalização no ecrã | Colocar um objeto no ecrã e movê-lo: para cima/baixo e esquerda/direita | Surge um contorno à volta do objeto com duas setas: a vertical cresce e aponta para cima ao subir o objeto (volume); a horizontal aponta para o lado onde o objeto está (panorâmica) | ☐ | |
+| 21 | Moldura-guia | Com o instrumento ativo, observar as bordas do vídeo | Aparecem etiquetas nas bordas: topo «▲ volume +», fundo «▼ volume −», lados «◀/▶ panorâmica»; desaparecem ao parar o instrumento | ☐ | |
 
 ## Estado dos testes (para preencher)
 
@@ -48,11 +50,12 @@ Registra o resultado de cada teste numa coluna à direita.
   executar.
 - Testes apenas planeados: todos os acima.
 
-## Problemas conhecidos da Fase 1
+## Problemas conhecidos
 
-- Os sons são provisórios e sintetizados (ver
-  `audio/LICENCA-E-FONTES.md`); a avaliação artística só faz sentido
-  depois de serem substituídos por gravações reais.
+- Os cinco sons são gravações de campo reais licenciadas
+  (ver `audio/LICENCA-E-FONTES.md`); se um ficheiro de áudio falhar
+  ao carregar, os restantes continuam a funcionar e a página indica
+  qual elemento ficou sem som.
 - Objetos com cores pouco saturadas (por exemplo, pastéis ou tecidos
   escuros) podem não ser detetados; usar cores vivas.
 - Roupas ou fundos com as cores alvo podem provocar falsos positivos;

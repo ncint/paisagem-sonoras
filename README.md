@@ -36,6 +36,7 @@ audio/trovoada.wav    Trovoada — gravação real CC BY-SA 4.0
 audio/LICENCA-E-FONTES.md   Estado e critérios de licenciamento dos sons
 ferramentas/gerar_audios.py  Script que regenera os sons provisórios
 ferramentas/teste-deteccao.mjs  Testes automatizados da lógica de deteção
+ferramentas/teste-audio.mjs    Testes automatizados do motor de áudio
 TESTES.md             Plano de testes para pessoas sem conhecimentos de programação
 ```
 

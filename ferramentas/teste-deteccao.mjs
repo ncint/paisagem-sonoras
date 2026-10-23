@@ -269,6 +269,84 @@ verificar(
   verificar('gamas de matiz sem sobreposições', semSobreposicao);
 }
 
+// ---------- 5. Caixa delimitadora do objeto ----------
+
+{
+  // Objeto apenas na faixa do topo, colunas 10-29 de 100: a caixa deve
+  // cobrir exatamente essa região e nada mais.
+  const d = new DeteccaoCores(100);
+  const [r, g, b] = hexParaRgb('#d0342c');
+  d.canvas = { width: 0, height: 0 };
+  d.ctx = {
+    drawImage() {},
+    getImageData(x, y, l, a) {
+      const dados = new Uint8ClampedArray(l * a * 4);
+      for (let i = 0; i < l * a; i++) {
+        const coluna = i % l;
+        const linha = Math.floor(i / l);
+        const comObjeto = linha < 19 && coluna >= 10 && coluna < 30;
+        const o = i * 4;
+        dados[o] = comObjeto ? r : 200;
+        dados[o + 1] = comObjeto ? g : 200;
+        dados[o + 2] = comObjeto ? b : 200;
+        dados[o + 3] = 255;
+      }
+      return { data: dados };
+    },
+  };
+  let res = null;
+  for (let i = 0; i < 5; i++) res = d.analisar(video, SENS);
+  const caixa = res.cores.vermelho.caixa;
+  verificar(
+    `caixa delimitadora cobre o objeto (x0~0.10, x1~0.30, y1~0.25; obtido: ${
+      caixa ? `x0=${caixa.x0.toFixed(2)} x1=${caixa.x1.toFixed(2)} y1=${caixa.y1.toFixed(2)}` : 'null'
+    })`,
+    caixa !== null
+      && Math.abs(caixa.x0 - 0.10) < 0.02
+      && Math.abs(caixa.x1 - 0.30) < 0.02
+      && Math.abs(caixa.y1 - (19 / 75)) < 0.02
+      && caixa.y0 === 0
+  );
+
+  // Sem objeto: caixa é null
+  const dVazio = criarDetectorComFrame('#808080');
+  const resVazio = dVazio.analisar(video, SENS);
+  verificar(
+    'sem objeto, caixa delimitadora é null',
+    resVazio.cores.vermelho.caixa === null
+  );
+
+  // Objeto à esquerda: centro da caixa fica na metade esquerda
+  const dEsq = new DeteccaoCores(100);
+  dEsq.canvas = { width: 0, height: 0 };
+  dEsq.ctx = {
+    drawImage() {},
+    getImageData(x, y, l, a) {
+      const dados = new Uint8ClampedArray(l * a * 4);
+      for (let i = 0; i < l * a; i++) {
+        const coluna = i % l;
+        const comObjeto = coluna < 25;
+        const o = i * 4;
+        dados[o] = comObjeto ? r : 200;
+        dados[o + 1] = comObjeto ? g : 200;
+        dados[o + 2] = comObjeto ? b : 200;
+        dados[o + 3] = 255;
+      }
+      return { data: dados };
+    },
+  };
+  let resEsq = null;
+  for (let i = 0; i < 5; i++) resEsq = dEsq.analisar(video, SENS);
+  const caixaEsq = resEsq.cores.vermelho.caixa;
+  const centroCaixa = caixaEsq ? (caixaEsq.x0 + caixaEsq.x1) / 2 : null;
+  verificar(
+    `objeto à esquerda: centro da caixa < 0.5 (obtido: ${
+      centroCaixa !== null ? centroCaixa.toFixed(2) : 'null'
+    })`,
+    centroCaixa !== null && centroCaixa < 0.5
+  );
+}
+
 // ---------- Resumo ----------
 
 if (falhas === 0) {

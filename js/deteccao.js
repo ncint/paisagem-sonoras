@@ -38,7 +38,10 @@ export const CORES = {
 };
 
 // Converte RGB (0-255) em HSV (h 0-360, s 0-1, v 0-1).
-// Versão inline, sem alocações, para manter a análise rápida.
+// Escreve o resultado no array hsvSaida, reutilizado em todos os
+// píxeis e frames: a ~19 mil píxeis por frame, criar um array novo
+// em cada chamada era pressão de garbage collection desnecessária.
+const hsvSaida = [0, 0, 0];
 function rgbParaHsv(r, g, b) {
   const rN = r / 255, gN = g / 255, bN = b / 255;
   const max = Math.max(rN, gN, bN);
@@ -51,9 +54,9 @@ function rgbParaHsv(r, g, b) {
     else h = 60 * (((rN - gN) / d) + 4);
   }
   if (h < 0) h += 360;
-  const s = max === 0 ? 0 : d / max;
-  const v = max;
-  return [h, s, v];
+  hsvSaida[0] = h;
+  hsvSaida[1] = max === 0 ? 0 : d / max;
+  hsvSaida[2] = max;
 }
 
 export class DeteccaoCores {
@@ -68,11 +71,16 @@ export class DeteccaoCores {
     this.presente = {};
     this.intensidade = {};
     this.posXSuave = {};
+    // Máscaras de visualização alocadas uma única vez por cor e
+    // reutilizadas em todos os frames (limpas com fill(0) no início de
+    // cada análise); antes eram recriadas em cada frame.
+    this.mascaras = {};
     for (const chave of Object.keys(CORES)) {
       this.framesAtivo[chave] = 0;
       this.presente[chave] = false;
       this.intensidade[chave] = 0;
       this.posXSuave[chave] = 0.5;
+      this.mascaras[chave] = new Uint8Array(0);
     }
   }
 
@@ -105,6 +113,10 @@ export class DeteccaoCores {
     const contadores = {};
     const somaX = {};
     const somaY = {};
+    // Caixa delimitadora por cor (minX, minY, maxX, maxY em píxeis da
+    // análise): permite sinalizar o objeto em si no ecrã, e não apenas
+    // a sua posição média.
+    const caixas = {};
 
     // Lista de [chave, gamas, limiarExtra] pré-computada uma única vez
     if (!this._alvos) {
@@ -120,11 +132,13 @@ export class DeteccaoCores {
       contadores[chave] = 0;
       somaX[chave] = 0;
       somaY[chave] = 0;
+      caixas[chave] = [Infinity, Infinity, -Infinity, -Infinity];
     }
     for (const chave of this._chavesEscuras) {
       contadores[chave] = 0;
       somaX[chave] = 0;
       somaY[chave] = 0;
+      caixas[chave] = [Infinity, Infinity, -Infinity, -Infinity];
     }
 
     // Limiares do preto. Testado ANTES da classificação por matiz:
@@ -141,41 +155,61 @@ export class DeteccaoCores {
     const alvos = this._alvos;
     const escuras = this._chavesEscuras;
 
-    // Máscara de visualização: um Uint8Array por cor, com 1 nos píxeis
+    // Máscaras de visualização: um Uint8Array por cor, com 1 nos píxeis
     // classificados. Mesma resolução da análise; o app.js desenha-a
     // sobre o vídeo para mostrar exatamente onde cada cor é detetada.
-    const mascaras = {};
-    for (const chave of Object.keys(CORES)) {
-      mascaras[chave] = new Uint8Array(totais);
+    // Redimensionadas apenas quando a área de análise muda; fora isso,
+    // reutilizadas de frame para frame.
+    const mascaras = this.mascaras;
+    for (const chave of Object.keys(mascaras)) {
+      if (mascaras[chave].length !== totais) {
+        mascaras[chave] = new Uint8Array(totais);
+      } else {
+        mascaras[chave].fill(0);
+      }
     }
 
     for (let i = 0; i < dados.length; i += 4) {
       const p = i / 4;
-      const [h, s, v] = rgbParaHsv(dados[i], dados[i + 1], dados[i + 2]);
+      rgbParaHsv(dados[i], dados[i + 1], dados[i + 2]);
 
       // Preto: escuro e pouco saturado, antes de qualquer teste de matiz
-      if (escuras.length > 0 && v < LIM_PRETO_VAL && s < LIM_PRETO_SAT) {
+      if (escuras.length > 0 && hsvSaida[2] < LIM_PRETO_VAL && hsvSaida[1] < LIM_PRETO_SAT) {
         const chave = escuras[0];
         contadores[chave]++;
         mascaras[chave][p] = 1;
+        const cx = p % this.largura;
+        const cy = (p - cx) / this.largura;
+        const caixa = caixas[chave];
+        if (cx < caixa[0]) caixa[0] = cx;
+        if (cy < caixa[1]) caixa[1] = cy;
+        if (cx > caixa[2]) caixa[2] = cx;
+        if (cy > caixa[3]) caixa[3] = cy;
         somaX[chave] += p % this.largura;
         somaY[chave] += Math.floor(p / this.largura);
         continue;
       }
 
-      if (s < satMin || v < valMin) continue;
+      if (hsvSaida[1] < satMin || hsvSaida[2] < valMin) continue;
       for (let a = 0; a < alvos.length; a++) {
         // Cores com satMinExtra exigem saturação adicional (ex.: o vermelho,
         // para não confundir a pele humana com um objeto vermelho)
-        if (s < satMin + alvos[a][2]) continue;
+        if (hsvSaida[1] < satMin + alvos[a][2]) continue;
         const gamas = alvos[a][1];
         for (let g = 0; g < gamas.length; g++) {
-          if (h >= gamas[g][0] && h <= gamas[g][1]) {
+          if (hsvSaida[0] >= gamas[g][0] && hsvSaida[0] <= gamas[g][1]) {
             const chave = alvos[a][0];
             contadores[chave]++;
             mascaras[chave][p] = 1;
-            somaX[chave] += p % this.largura;
-            somaY[chave] += Math.floor(p / this.largura);
+            const cx = p % this.largura;
+            const cy = (p - cx) / this.largura;
+            somaX[chave] += cx;
+            somaY[chave] += cy;
+            const caixa = caixas[chave];
+            if (cx < caixa[0]) caixa[0] = cx;
+            if (cy < caixa[1]) caixa[1] = cy;
+            if (cx > caixa[2]) caixa[2] = cx;
+            if (cy > caixa[3]) caixa[3] = cy;
             break;
           }
         }
@@ -211,19 +245,28 @@ export class DeteccaoCores {
       // Posições médias (0 = topo/esquerda, 1 = fundo/direita)
       let posXBruto = null;
       let posY = null;
+      // Caixa delimitadora normalizada (0-1) ou null sem píxeis
+      let caixa = null;
       if (contadores[chave] > 0) {
         posXBruto = (somaX[chave] / contadores[chave]) / this.largura;
         posY = (somaY[chave] / contadores[chave]) / alturaAnalise;
+        const c = caixas[chave];
+        caixa = {
+          x0: c[0] / this.largura,
+          y0: c[1] / alturaAnalise,
+          x1: (c[2] + 1) / this.largura,
+          y1: (c[3] + 1) / alturaAnalise,
+        };
       }
 
       // Posição horizontal suavizada (para a panorâmica estéreo):
-      // média móvel exponencial quando o objeto está presente,
-      // relaxamento suave quando ausente.
+      // média móvel exponencial quando o objeto está presente;
+      // quando ausente, o alvo é o próprio valor atual, ou seja, a
+      // posição simplesmente congela até o objeto voltar.
       const alvoX = this.presente[chave] && posXBruto !== null
         ? Math.min(1, Math.max(0, posXBruto))
         : this.posXSuave[chave];
-      this.posXSuave[chave] += (this.presente[chave] ? 0.15 : 0.05)
-        * (alvoX - this.posXSuave[chave]);
+      this.posXSuave[chave] += 0.15 * (alvoX - this.posXSuave[chave]);
       const posX = this.posXSuave[chave];
 
       // Intensidade alvo: mapeia a posição VERTICAL em volume relativo.
@@ -241,6 +284,7 @@ export class DeteccaoCores {
         area: fracArea,
         posX,
         posY,
+        caixa,
         intensidade: this.intensidade[chave],
         mascara: mascaras[chave],
       };
