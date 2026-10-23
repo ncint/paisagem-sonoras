@@ -7,7 +7,11 @@ do Wikimedia Commons, com licenças que permitem a redistribuição
 dentro desta aplicação pública. Cada ficheiro foi editado (trecho de
 ~10 s, conversão para WAV mono 44,1 kHz 16-bit, normalização
 loudnorm −20 LUFS, fades de 0,5 s nas extremidades para reprodução
-em ciclo contínuo sem cortes audíveis).
+em ciclo contínuo sem cortes audíveis). O `vento.wav` foi adicionalmente
+reeditado (2026-10-24): o fade final provocava um silêncio audível a
+cada volta do loop; foi usado o trecho 0,35–9,55 s e criada uma
+emenda de loop com crossfade equal-power de 60 ms + micro-fade de
+2 ms nos extremos — ciclo contínuo sem silêncio nem cliques.
 
 | Ficheiro       | Elemento     | Conteúdo                        | Autor / Fonte | Licença | Atribuição necessária |
 |----------------|--------------|---------------------------------|--------------|---------|-----------------------|
