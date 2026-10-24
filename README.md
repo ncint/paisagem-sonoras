@@ -3,7 +3,7 @@
 Instrumento musical interativo por webcam: objetos **vermelhos**,
 **verdes**, **azuis**, **amarelos** e **pretos** colocados sobre uma
 mesa ativam paisagens sonoras naturais — aves, água, vento, grilos,
-trovoada distante, galo, chuva e cão. A posição vertical do objeto no
+trovoada distante, mosca, chuva e cão. A posição vertical do objeto no
 enquadramento controla a intensidade do som: no topo da imagem é mais
 intenso; no fundo (perto de quem usa), mais suave.
 
@@ -12,7 +12,7 @@ intenso; no fundo (perto de quem usa), mais suave.
 - Azul → **vento**
 - Amarelo → **grilos**
 - Preto → **trovoada distante**
-- Laranja → **galo** (laranja vivo e claro)
+- Laranja → **mosca** (laranja vivo e claro)
 - Castanho → **chuva** (laranja escuro e saturado)
 - Roxo → **cão**
 
@@ -36,9 +36,9 @@ audio/agua.wav        Água a correr — gravação real, domínio público
 audio/vento.wav       Vento em floresta — gravação real CC BY 4.0
 audio/grilos.wav      Grilo-arborícola — gravação real CC BY-SA 4.0
 audio/trovoada.wav    Trovoada — gravação real CC BY-SA 4.0
-audio/galo.wav        Galo — provisório, sintetizado (a substituir)
-audio/chuva.wav       Chuva — provisório, sintetizado (a substituir)
-audio/cao.wav         Cão — provisório, sintetizado (a substituir)
+audio/mosca.wav       Zumbido de inseto — gravação real CC BY 3.0
+audio/chuva.wav       Chuva — gravação real, domínio público
+audio/cao.wav         Latidos de cão — gravação real CC BY-SA 3.0
 audio/LICENCA-E-FONTES.md   Estado e critérios de licenciamento dos sons
 ferramentas/gerar_audios.py  Script que regenera os sons provisórios
 ferramentas/teste-deteccao.mjs  Testes automatizados da lógica de deteção

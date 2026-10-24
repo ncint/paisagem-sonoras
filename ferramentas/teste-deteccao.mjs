@@ -299,14 +299,14 @@ verificar(
     let rL = null;
     for (let i = 0; i < 5; i++) rL = dL.analisar(video, SENS);
     verificar(
-      'laranja vivo ativa galo e não chuva',
+      'laranja vivo ativa mosca e não chuva',
       rL.cores.laranja.presente && !rL.cores.castanho.presente
     );
     const dC = criarDetectorComFrame('#5a2e0a');
     let rC = null;
     for (let i = 0; i < 5; i++) rC = dC.analisar(video, SENS);
     verificar(
-      'castanho escuro ativa chuva e não galo',
+      'castanho escuro ativa chuva e não mosca',
       rC.cores.castanho.presente && !rC.cores.laranja.presente
     );
   }

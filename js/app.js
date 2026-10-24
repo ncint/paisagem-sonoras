@@ -27,7 +27,7 @@ const indicadores = {
   azul: document.getElementById('ind-vento'),
   amarelo: document.getElementById('ind-grilos'),
   preto: document.getElementById('ind-trovoada'),
-  laranja: document.getElementById('ind-galo'),
+  laranja: document.getElementById('ind-mosca'),
   castanho: document.getElementById('ind-chuva'),
   roxo: document.getElementById('ind-cao'),
 };
@@ -38,7 +38,7 @@ const NOMES_ELEMENTO = {
   azul: 'vento',
   amarelo: 'grilos',
   preto: 'trovoada',
-  laranja: 'galo',
+  laranja: 'mosca',
   castanho: 'chuva',
   roxo: 'cão',
 };
@@ -342,7 +342,7 @@ const MOTIVOS = {
   azul: 'vento',
   amarelo: 'grilos',
   preto: 'trovoada',
-  laranja: 'galo',
+  laranja: 'zumbido',
   castanho: 'chuva',
   roxo: 'cao',
 };
@@ -413,12 +413,12 @@ function desenharMotivo(ctx, chave, nivel, t, escala = 1) {
         ctx.fillRect(xg, yg, 1.4 * escala, 5 * escala);
       }
     }
-  } else if (motivo === 'aves' || motivo === 'grilos' || motivo === 'galo' || motivo === 'cao') {
+  } else if (motivo === 'aves' || motivo === 'grilos' || motivo === 'zumbido' || motivo === 'cao') {
     // Pulsos: "batidas" rítmicas distintas por som
     const batidas = {
       aves: [0.3, 0.55, 0.8, 1.3, 1.7, 2.1],
       grilos: [0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6],
-      galo: [0.4, 1.5, 2.6],
+      zumbido: [0.15, 0.45, 0.75, 1.05, 1.35, 1.65, 1.95, 2.25, 2.55, 2.85, 3.15, 3.45, 3.75],
       cao: [0.3, 0.5, 1.8, 2.0, 3.4, 3.6],
     }[motivo];
     const ciclo = 4.0; // segundos
