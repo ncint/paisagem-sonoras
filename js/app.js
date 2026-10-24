@@ -600,6 +600,11 @@ function parar() {
 // ---------- Eventos ----------
 
 criarVisualizadores();
+// Estado de repouso: um frame discreto em todos os visualizadores,
+// para serem visíveis desde o carregamento da página.
+for (const chave of Object.keys(visualizadores)) {
+  desenharVisualizador(chave, 0, 0);
+}
 
 botaoIniciar.addEventListener('click', iniciar);
 botaoParar.addEventListener('click', parar);
