@@ -357,7 +357,11 @@ body {
   border: 1px solid var(--linha);
   border-radius: 8px;
   transition: border-color var(--tempo-transicao), box-shadow var(--tempo-transicao);
+  flex-wrap: wrap;
 }
+
+/* Ocupa a segunda linha quando não cabe tudo numa só */
+.visualizador { flex-basis: 120px; }
 
 .painel .indicador + .indicador { margin-top: 0.75rem; }
 
@@ -371,6 +375,21 @@ body {
 }
 
 .rotulo { font-weight: 550; font-size: 0.95rem; }
+
+/* Mini-visualizador de cada elemento (canvas no indicador) */
+
+.visualizador {
+  display: block;
+  width: 120px;
+  height: 34px;
+  border-radius: 6px;
+  background: var(--fundo);
+  flex-shrink: 0;
+}
+
+@media (max-width: 34rem) {
+  .visualizador { width: 90px; }
+}
 
 .acoes {
   display: inline-flex;
