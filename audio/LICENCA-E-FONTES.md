@@ -20,9 +20,9 @@ emenda de loop com crossfade equal-power de 60 ms + micro-fade de
 | vento.wav      | Azul — Vento | Vento em floresta | Gravity Sound, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Wind_in_forest_(Gravity_Sound).wav) | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0) | Sim: crédito ao autor + link da licença |
 | grilos.wav     | Amarelo — Grilos | Grilo-arborícola (Oecanthus pellucens) | Olivier Grimm, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Oecanthus_pellucens_-_Tree_Cricket_XC558882.mp3) (original: Xeno-canto XC558882) | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) | Sim: crédito ao autor + link da licença |
 | trovoada.wav   | Preto — Trovoada | Trovoada | Amuzujoe, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Thunder_01.ogg) | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) | Sim: crédito ao autor + link da licença |
-| galo.wav       | Laranja — Galo | PROVISÓRIO: sintetizado | — | — | Substituir por gravação real licenciada |
-| chuva.wav      | Castanho — Chuva | PROVISÓRIO: sintetizado | — | — | Substituir por gravação real licenciada |
-| cao.wav        | Roxo — Cão | PROVISÓRIO: sintetizado | — | — | Substituir por gravação real licenciada |
+| mosca.wav      | Laranja — Mosca | Zumbido de inseto (abelha em voo) | Free Sounds Library (Spanac), via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Bee_buzzing_sound_(animal_noises).opus) | [CC BY 3.0](https://creativecommons.org/licenses/by/3.0) | Sim: crédito ao autor + link da licença |
+| chuva.wav      | Castanho — Chuva | Chuva | via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Rain.ogg) | Domínio público (PD-self) | Não |
+| cao.wav        | Roxo — Cão | Latidos de cão (Canis lupus familiaris) | Amada44, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Barking_of_a_dog.ogg e [File:Barking_of_a_dog_2.ogg](https://commons.wikimedia.org/wiki/File:Barking_of_a_dog_2.ogg)) | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0) | Sim: crédito ao autor + link da licença |
 
 ## Cumprimento das licenças
 

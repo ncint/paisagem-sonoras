@@ -92,7 +92,7 @@ const FICHEIROS_BASE = {
   azul: 'audio/vento.wav',
   amarelo: 'audio/grilos.wav',
   preto: 'audio/trovoada.wav',
-  laranja: 'audio/galo.wav',
+  laranja: 'audio/mosca.wav',
   castanho: 'audio/chuva.wav',
   roxo: 'audio/cao.wav',
 };

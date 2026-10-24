@@ -31,10 +31,10 @@ Registra o resultado de cada teste numa coluna à direita.
 | 8 | Coexistência | Colocar os cinco objetos em simultâneo | Os cinco indicadores ficam ativos e os sons ouvem-se misturados | ☐ | |
 | 8b | Detecção do amarelo | Colocar só o objeto amarelo na mesa | O indicador «Grilos» fica ativo e ouve-se o som de grilos | ☐ | |
 | 8c | Detecção do preto | Colocar só o objeto preto na mesa | O indicador «Trovoada» fica ativo e ouve-se o som de trovoada | ☐ | |
-| 8d | Detecção do laranja | Colocar só o objeto laranja vivo na mesa | O indicador «Galo» fica ativo (sem ativar «Chuva») | ☐ | |
-| 8e | Detecção do castanho | Colocar só o objeto castanho escuro na mesa | O indicador «Chuva» fica ativo (sem ativar «Galo») | ☐ | |
+| 8d | Detecção do laranja | Colocar só o objeto laranja vivo na mesa | O indicador «Mosca» fica ativo (sem ativar «Chuva») | ☐ | |
+| 8e | Detecção do castanho | Colocar só o objeto castanho escuro na mesa | O indicador «Chuva» fica ativo (sem ativar «Mosca») | ☐ | |
 | 8f | Detecção do roxo | Colocar só o objeto roxo na mesa | O indicador «Cão» fica ativo | ☐ | |
-| 8g | Laranja vs. castanho | Colocar o laranja vivo e o castanho escuro em simultâneo | «Galo» e «Chuva» ficam ativos cada um com o seu objeto; a mão (pele) não ativa nenhum deles | ☐ | |
+| 8g | Laranja vs. castanho | Colocar o laranja vivo e o castanho escuro em simultâneo | «Mosca» e «Chuva» ficam ativos cada um com o seu objeto; a mão (pele) não ativa nenhum deles | ☐ | |
 | 9 | Posição vertical | Mover um objeto devagar do fundo da imagem para o topo | O som fica mais intenso no topo e mais suave no fundo (perto de ti), sem saltos abruptos | ☐ | |
 | 10 | Retirar objeto | Retirar um objeto do enquadramento | O som desse elemento desliga-se gradualmente (cerca de meio segundo), sem corte seco | ☐ | |
 | 11 | Volume geral | Mexer o cursor «Volume geral» | O volume total muda imediatamente | ☐ | |

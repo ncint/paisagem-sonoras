@@ -191,36 +191,6 @@ def gerar_trovoada(duracao=9.0):
     return saida, duracao
 
 
-def gerar_galo(duracao=9.0):
-    """Galo: cucurucus dispersos (varredura descendente com vibrato)."""
-    n = int(duracao * SR)
-    saida = np.zeros(n)
-    random.seed(41)
-
-    def cucurucu(t0):
-        dur = 0.7
-        m = int(dur * SR)
-        tt = np.linspace(0, dur, m, endpoint=False)
-        # Quatro sílabas descendentes (go-go-go-gó)
-        f0 = 700.0
-        freq = np.where(
-            tt < 0.12, 720,
-            np.where(tt < 0.24, 660,
-                     np.where(tt < 0.36, 600, 520 - 80 * (tt - 0.36) / 0.34)))
-        vibrato = 1 + 0.04 * np.sin(2 * np.pi * 28 * tt)
-        fase = 2 * np.pi * np.cumsum(freq * vibrato) / SR
-        env = np.sin(np.pi * np.minimum(tt / 0.05, 1)) ** 2
-        env *= np.exp(-tt * 1.1)
-        i0 = int(t0 * SR)
-        saida[i0:i0 + m] += np.sin(fase) * env * 0.8
-        # segunda harmónica para timbre metálico
-        saida[i0:i0 + m] += np.sin(2 * fase) * env * 0.25
-
-    for t0 in [0.3, 2.2, 4.6, 7.3]:
-        cucurucu(t0)
-    return saida, duracao
-
-
 def gerar_chuva(duracao=9.0):
     """Chuva contínua: rumor rosa suave com pingos dispersos."""
     n = int(duracao * SR)
@@ -274,7 +244,6 @@ if __name__ == "__main__":
         ("vento.wav", gerar_vento()),
         ("grilos.wav", gerar_grilos()),
         ("trovoada.wav", gerar_trovoada()),
-        ("galo.wav", gerar_galo()),
         ("chuva.wav", gerar_chuva()),
         ("cao.wav", gerar_cao()),
     ]:
