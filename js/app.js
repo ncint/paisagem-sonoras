@@ -282,7 +282,12 @@ function desenharDeteccao(res) {
     const visY = Math.min(cy1 - visA - 10, Math.max(cy0 + 6, alturaPx - visA - 6));
     ctxCanvas.fillStyle = 'rgba(22, 24, 28, 0.62)';
     ctxCanvas.fillRect(visX, visY, visL, visA);
+    // O motivo desenha nas suas próprias coordenadas (0,0)-(W,H):
+    // translada o contexto para a posição da caixa e restaura depois.
+    ctxCanvas.save();
+    ctxCanvas.translate(visX, visY);
     desenharMotivo(ctxCanvas, chave, info.intensidade, performance.now() / 1000, escalaVideo);
+    ctxCanvas.restore();
 
     // Seta vertical: aponta para CIMA (o volume sobe quando o objeto
     // está mais acima); o comprimento é proporcional à intensidade.
