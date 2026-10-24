@@ -57,6 +57,7 @@ let pedidoId = 0;         // distingue cada clique em «Iniciar»; permite cance
 // deteção só corre quando passaram estes ms desde a última análise.
 const INTERVALO_ANALISE_MS = 33;
 let ultimaAnalise = 0;
+let ultimasCores = null; // últimas cores detetadas (para os visualizadores)
 
 function cancelado(id) {
   return id !== pedidoId;
@@ -312,6 +313,140 @@ function atualizarIndicadores(cores) {
   }
 }
 
+// ---------- Visualizadores por elemento ----------
+
+// Cada indicador do painel recebe um pequeno canvas com uma animação
+// própria do som: ondas (água), pingos (chuva), pássaro (aves), etc.
+// A amplitude acompanha a intensidade detetada; sem deteção, a
+// animação esvazia até ficar quase parada.
+const LARGURA_VIS = 120;
+const ALTURA_VIS = 34;
+
+const MOTIVOS = {
+  vermelho: 'aves',
+  verde: 'agua',
+  azul: 'vento',
+  amarelo: 'grilos',
+  preto: 'trovoada',
+  laranja: 'galo',
+  castanho: 'chuva',
+  roxo: 'cao',
+};
+
+const CORES_TRAO = {
+  vermelho: '#c94f3d',
+  verde: '#4c8c4a',
+  azul: '#4a7fb5',
+  amarelo: '#d4ac2b',
+  preto: '#555555',
+  laranja: '#e67e22',
+  castanho: '#8b5a2b',
+  roxo: '#8e44ad',
+};
+
+const visualizadores = {};
+const visTempo = {};
+
+function criarVisualizadores() {
+  for (const [chave, el] of Object.entries(indicadores)) {
+    const canvas = document.createElement('canvas');
+    canvas.className = 'visualizador';
+    canvas.width = LARGURA_VIS;
+    canvas.height = ALTURA_VIS;
+    canvas.setAttribute('aria-hidden', 'true');
+    const acoes = el.querySelector('.acoes');
+    el.insertBefore(canvas, acoes);
+    visualizadores[chave] = canvas.getContext('2d');
+    visTempo[chave] = 0;
+  }
+}
+
+// Desenha um frame do visualizador de um elemento.
+// nivel: 0 (parado) a 1 (intenso).
+function desenharVisualizador(chave, nivel, t) {
+  const ctx = visualizadores[chave];
+  if (!ctx) return;
+  const W = LARGURA_VIS, H = ALTURA_VIS;
+  ctx.clearRect(0, 0, W, H);
+  const cor = CORES_TRAO[chave];
+  const motivo = MOTIVOS[chave];
+  const a = 0.15 + 0.85 * nivel; // amplitude
+
+  ctx.lineWidth = 1.6;
+  ctx.strokeStyle = cor;
+  ctx.fillStyle = cor;
+
+  if (motivo === 'agua' || motivo === 'vento' || motivo === 'chuva') {
+    // Ondas / rajadas / aguaceiro: linhas onduladas horizontais
+    const linhas = motivo === 'chuva' ? 3 : 2;
+    for (let l = 0; l < linhas; l++) {
+      const yBase = H * (0.35 + l * 0.28);
+      ctx.beginPath();
+      for (let x = 0; x <= W; x += 3) {
+        const y = yBase
+          + Math.sin(x * (motivo === 'chuva' ? 0.30 : 0.12) + t * (2 + l) + l * 2) * 4 * a
+          + (motivo === 'vento' ? Math.sin(x * 0.05 - t * 3) * 3 * a : 0);
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+    if (motivo === 'chuva') {
+      // pingos a cair
+      for (let p = 0; p < 4; p++) {
+        const xg = 12 + p * 28 + (Math.sin(t * 1.7 + p) * 6 * a);
+        const yg = ((t * 60 * (0.6 + a) + p * 23) % (H + 10)) - 5;
+        ctx.fillRect(xg, yg, 1.4, 5);
+      }
+    }
+  } else if (motivo === 'aves' || motivo === 'grilos' || motivo === 'galo' || motivo === 'cao') {
+    // Pulsos: traços verticais com "batidas" rítmicas distintas por som
+    const batidas = {
+      aves: [0.3, 0.55, 0.8, 1.3, 1.7, 2.1],
+      grilos: [0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6],
+      galo: [0.4, 1.5, 2.6],
+      cao: [0.3, 0.5, 1.8, 2.0, 3.4, 3.6],
+    }[motivo];
+    const ciclo = 4.0; // segundos
+    const tc = t % ciclo;
+    for (let b = 0; b < batidas.length; b++) {
+      const x = 8 + b * ((W - 16) / (batidas.length - 1));
+      const dt = Math.abs(tc - batidas[b]);
+      const pulso = Math.max(0, 1 - dt * 6) * a;
+      const alt = 3 + pulso * (H * 0.75);
+      ctx.beginPath();
+      ctx.arc(x, H - alt - 2, 2 + pulso * 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  } else if (motivo === 'trovoada') {
+    // Relâmpagos: zig-zag ocasional com flash
+    const ciclo = 4.0;
+    const tc = t % ciclo;
+    const flash = Math.max(0, 1 - Math.abs(tc - 1.0) * 8) * a;
+    ctx.globalAlpha = 0.3 + flash;
+    ctx.beginPath();
+    ctx.moveTo(10, 4);
+    ctx.lineTo(28, 16);
+    ctx.lineTo(20, 16);
+    ctx.lineTo(38, 30);
+    ctx.stroke();
+    if (flash > 0.5) {
+      ctx.fillRect(0, 0, W, H);
+    }
+    ctx.globalAlpha = 1;
+  }
+}
+
+// Atualiza todos os visualizadores; chamado no loop de animação.
+// Sem instrumento ativo, não desenha (os canvases ficam limpos).
+function passoVisualizadores(cores, t) {
+  for (const chave of Object.keys(visualizadores)) {
+    const info = cores ? cores[chave] : null;
+    const nivel = info && info.presente ? info.intensidade : 0;
+    desenharVisualizador(chave, nivel, t);
+  }
+}
+
 // ---------- Barras-guia (volume e panorâmica) ----------
 
 // A barra de volume mostra a intensidade do objeto presente mais
@@ -337,6 +472,8 @@ function atualizarBarrasGuia(cores) {
 function passo(agora) {
   if (!aCorrer) return;
   requestHandle = requestAnimationFrame(passo);
+  // Visualizadores a 60 fps (leves); deteção limitada a ~30 fps
+  if (ultimasCores) passoVisualizadores(ultimasCores, agora / 1000);
   if (agora - ultimaAnalise < INTERVALO_ANALISE_MS) return;
   ultimaAnalise = agora;
   const sensibilidade = sensibilidadeInput.value / 100;
@@ -344,6 +481,7 @@ function passo(agora) {
   if (video.readyState >= 2) {
     const resultado = deteccao.analisar(video, sensibilidade);
     if (resultado) {
+      ultimasCores = resultado.cores;
       desenharDeteccao(resultado);
       atualizarIndicadores(resultado.cores);
       atualizarBarrasGuia(resultado.cores);
@@ -446,6 +584,8 @@ function parar() {
   molduraGuia.classList.add('oculta');
   preenchimentoVolume.style.height = '0%';
   marcadorPan.style.left = '50%';
+  ultimasCores = null;
+  passoVisualizadores({}, performance.now() / 1000);
   ctxCanvas.clearRect(0, 0, canvasDetecao.width, canvasDetecao.height);
   for (const el of Object.values(indicadores)) {
     el.classList.remove('ativo');
@@ -458,6 +598,8 @@ function parar() {
 }
 
 // ---------- Eventos ----------
+
+criarVisualizadores();
 
 botaoIniciar.addEventListener('click', iniciar);
 botaoParar.addEventListener('click', parar);
