@@ -103,6 +103,14 @@ export class MotorAudio {
       castanho: 'audio/chuva.wav',
       roxo: 'audio/cao.wav',
     };
+    // Versão de cache dos WAVs: quando um som é substituído/reatualizado,
+    // este valor muda (juntamente com o ?v= do index.html) para que os
+    // browsers não sirvam a gravação antiga em cache. O GitHub Pages
+    // serve os ?v= como o mesmo ficheiro.
+    const VERSAO_AUDIO = '20261024e';
+    for (const chave of Object.keys(ficheiros)) {
+      ficheiros[chave] = `${ficheiros[chave]}?v=${VERSAO_AUDIO}`;
+    }
 
     this.canais = {};
 
