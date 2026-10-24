@@ -286,7 +286,7 @@ function desenharDeteccao(res) {
     // translada o contexto para a posição da caixa e restaura depois.
     ctxCanvas.save();
     ctxCanvas.translate(visX, visY);
-    desenharMotivo(ctxCanvas, chave, info.intensidade, performance.now() / 1000, escalaVideo);
+    desenharMotivo(ctxCanvas, chave, info.intensidade, performance.now() / 1000, escalaVideo, true);
     ctxCanvas.restore();
 
     // Seta vertical: aponta para CIMA (o volume sobe quando o objeto
@@ -384,10 +384,14 @@ function criarVisualizadores() {
 // escala dada. Usado tanto nos mini-canvas do painel (escala 1) como
 // no overlay sobre o vídeo (escala maior, junto ao objeto).
 // nivel: 0 (parado) a 1 (intenso).
-function desenharMotivo(ctx, chave, nivel, t, escala = 1) {
+function desenharMotivo(ctx, chave, nivel, t, escala = 1, sobreFundoEscuro = false) {
   const W = LARGURA_VIS * escala;
   const H = ALTURA_VIS * escala;
-  const cor = CORES_TRAO[chave];
+  // Sobre o fundo escuro do overlay do vídeo, cores escuras (o cinza
+  // do preto/trovoada) não se veem: usa-se traço claro nesses casos.
+  const cor = sobreFundoEscuro && chave === 'preto'
+    ? 'rgba(245, 245, 245, 0.95)'
+    : CORES_TRAO[chave];
   const motivo = MOTIVOS[chave];
   const a = 0.15 + 0.85 * nivel; // amplitude
 
