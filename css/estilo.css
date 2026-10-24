@@ -450,6 +450,18 @@ body {
 
 .controlo input[type="range"] { grid-area: slider; width: 100%; }
 
+.controlo select {
+  grid-column: 1 / -1;
+  width: 100%;
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--linha);
+  border-radius: 8px;
+  background: var(--fundo);
+  color: var(--texto);
+}
+
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
