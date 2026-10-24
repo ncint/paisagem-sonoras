@@ -415,6 +415,12 @@ body {
 .indicador.amarelo.ativo .chip { background: var(--amarelo); }
 .indicador.preto.ativo { border-color: var(--preto); }
 .indicador.preto.ativo .chip { background: var(--preto); }
+.indicador.laranja.ativo { border-color: #e67e22; }
+.indicador.laranja.ativo .chip { background: #e67e22; }
+.indicador.castanho.ativo { border-color: #8b5a2b; }
+.indicador.castanho.ativo .chip { background: #8b5a2b; }
+.indicador.roxo.ativo { border-color: #8e44ad; }
+.indicador.roxo.ativo .chip { background: #8e44ad; }
 
 /* ---------- Ajustes ---------- */
 
@@ -443,6 +449,18 @@ body {
 }
 
 .controlo input[type="range"] { grid-area: slider; width: 100%; }
+
+.controlo select {
+  grid-column: 1 / -1;
+  width: 100%;
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--linha);
+  border-radius: 8px;
+  background: var(--fundo);
+  color: var(--texto);
+}
 
 input[type="range"] {
   -webkit-appearance: none;

@@ -99,6 +99,9 @@ export class MotorAudio {
       azul: 'audio/vento.wav',
       amarelo: 'audio/grilos.wav',
       preto: 'audio/trovoada.wav',
+      laranja: 'audio/galo.wav',
+      castanho: 'audio/chuva.wav',
+      roxo: 'audio/cao.wav',
     };
 
     this.canais = {};
@@ -191,11 +194,12 @@ export class MotorAudio {
   }
 
   // Atualiza o ganho de um canal com transição suave (rampa exponencial).
-  // valor: 0 a 1; mapeado para um máximo de 0,75 por canal.
+  // valor: 0 a 1; mapeado para um máximo de 0,7 por canal (com oito
+  // paisagens simultâneas, o compressor dá conta do resto).
   definirIntensidade(chave, valor) {
     const canal = this.canais && this.canais[chave];
     if (!canal) return;
-    const TETO_CANAL = 0.75;
+    const TETO_CANAL = 0.7;
     const alvo = Math.max(0.0001, Math.min(1, valor)) * TETO_CANAL;
     const agora = this.ctx.currentTime;
     // setTargetAtTime dá aproximação exponencial sem cliques

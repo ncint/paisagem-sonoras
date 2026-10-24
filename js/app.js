@@ -19,6 +19,7 @@ const botaoTelaCheia = document.getElementById('botao-tela-cheia');
 const painelVideo = document.querySelector('.painel-video');
 const preenchimentoVolume = document.getElementById('preenchimento-volume');
 const marcadorPan = document.getElementById('marcador-pan');
+const seletorCamara = document.getElementById('seletor-camara');
 
 const indicadores = {
   vermelho: document.getElementById('ind-aves'),
@@ -26,6 +27,9 @@ const indicadores = {
   azul: document.getElementById('ind-vento'),
   amarelo: document.getElementById('ind-grilos'),
   preto: document.getElementById('ind-trovoada'),
+  laranja: document.getElementById('ind-galo'),
+  castanho: document.getElementById('ind-chuva'),
+  roxo: document.getElementById('ind-cao'),
 };
 
 const NOMES_ELEMENTO = {
@@ -34,6 +38,9 @@ const NOMES_ELEMENTO = {
   azul: 'vento',
   amarelo: 'grilos',
   preto: 'trovoada',
+  laranja: 'galo',
+  castanho: 'chuva',
+  roxo: 'cão',
 };
 
 // ---------- Estado ----------
@@ -53,6 +60,62 @@ let ultimaAnalise = 0;
 
 function cancelado(id) {
   return id !== pedidoId;
+}
+
+// ---------- Seleção de câmara ----------
+
+// Preenche o seletor com as câmaras disponíveis. Só é fiável DEPOIS de
+// o utilizador autorizar o acesso (antes da permissão, muitos
+// navegadores escondem os identificadores); por isso é chamado no
+// arranque e no evento devicechange.
+async function atualizarListaCameras() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
+  try {
+    const dispositivos = await navigator.mediaDevices.enumerateDevices();
+    const cameras = dispositivos.filter((d) => d.kind === 'videoinput');
+    const valorAtual = seletorCamara.value;
+    seletorCamara.innerHTML = '';
+    if (cameras.length === 0) {
+      seletorCamara.appendChild(new Option('Nenhuma câmara disponível', ''));
+      return;
+    }
+    for (const [i, cam] of cameras.entries()) {
+      const rotulo = cam.label || `Câmara ${i + 1}`;
+      seletorCamara.appendChild(new Option(rotulo, cam.deviceId || ''));
+    }
+    // mantém a seleção atual se a câmara ainda existir
+    if ([...seletorCamara.options].some((o) => o.value === valorAtual)) {
+      seletorCamara.value = valorAtual;
+    }
+  } catch (e) {
+    // sem permissão ou navegador antigo: o seletor fica com a opção padrão
+  }
+}
+
+// Troca de câmara «a quente»: substitui a pista de vídeo sem parar o
+// áudio nem o loop de deteção. Em telemóveis, o utilizador escolhe
+// frontal/traseira pela etiqueta da câmara no seletor.
+async function trocarCamara() {
+  const deviceId = seletorCamara.value;
+  if (!deviceId || !aCorrer) return;
+  try {
+    const novaTransmissao = await navigator.mediaDevices.getUserMedia({
+      video: { deviceId: { exact: deviceId }, width: { ideal: 640 }, height: { ideal: 480 } },
+      audio: false,
+    });
+    limparTransmissao();
+    transmissao = novaTransmissao;
+    video.srcObject = transmissao;
+    await video.play();
+    definirMensagem('Câmara alterada.');
+  } catch (erro) {
+    definirMensagem(`Não foi possível usar a câmara escolhida: ${erro.message}`, true);
+  }
+}
+
+seletorCamara.addEventListener('change', trocarCamara);
+if (navigator.mediaDevices && navigator.mediaDevices.addEventListener) {
+  navigator.mediaDevices.addEventListener('devicechange', atualizarListaCameras);
 }
 
 // ---------- Ecrã inteiro (para projetar) ----------
@@ -108,6 +171,9 @@ const CORES_MASCARA = {
   azul: [74, 127, 181],
   amarelo: [212, 172, 43],
   preto: [40, 40, 40],
+  laranja: [230, 126, 34],
+  castanho: [121, 68, 35],
+  roxo: [142, 68, 173],
 };
 
 function desenharDeteccao(res) {
@@ -175,6 +241,9 @@ function desenharDeteccao(res) {
       azul: 'rgba(74, 127, 181, 0.95)',
       amarelo: 'rgba(212, 172, 43, 0.95)',
       preto: 'rgba(20, 20, 20, 0.95)',
+      laranja: 'rgba(230, 126, 34, 0.95)',
+      castanho: 'rgba(121, 68, 35, 0.95)',
+      roxo: 'rgba(142, 68, 173, 0.95)',
     }[chave];
     const corContorno = {
       vermelho: '#c94f3d',
@@ -182,6 +251,9 @@ function desenharDeteccao(res) {
       azul: '#4a7fb5',
       amarelo: '#d4ac2b',
       preto: '#141414',
+      laranja: '#e67e22',
+      castanho: '#794423',
+      roxo: '#8e44ad',
     }[chave];
 
     // Retângulo em volta do objeto detetado (caixa delimitadora da
@@ -297,10 +369,10 @@ async function iniciar() {
       throw new Error('Este navegador ou contexto (por exemplo, file://) não permite o acesso à câmara. Abre a página por HTTPS ou localhost.');
     }
 
-    transmissao = await navigator.mediaDevices.getUserMedia({
-      video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'environment' },
-      audio: false,
-    });
+    const opcao = seletorCamara.value
+      ? { deviceId: { exact: seletorCamara.value }, width: { ideal: 640 }, height: { ideal: 480 } }
+      : { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'environment' };
+    transmissao = await navigator.mediaDevices.getUserMedia({ video: opcao, audio: false });
     if (cancelado(id)) {
       // O utilizador clicou «Parar» enquanto a câmara era aberta
       limparTransmissao();
@@ -308,6 +380,7 @@ async function iniciar() {
     }
     video.srcObject = transmissao;
     await video.play();
+    await atualizarListaCameras();
 
     // O contexto de áudio só é criado dentro do clique (requisito dos navegadores)
     let avisosFalhas = null;

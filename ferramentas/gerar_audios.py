@@ -26,6 +26,9 @@ def salvar(nome, dados, duracao):
         dados = dados / pico * 0.85
     pcm = (dados * 32767).astype(np.int16)
     caminho = os.path.join(PASTA, nome)
+    if os.path.exists(caminho) and os.environ.get("SOBRESCREVER") != "1":
+        print(f"{nome}: JÁ EXISTE — mantido (usa SOBRESCREVER=1 para substituir)")
+        return
     with wave.open(caminho, "wb") as f:
         f.setnchannels(1)
         f.setsampwidth(2)
@@ -188,6 +191,81 @@ def gerar_trovoada(duracao=9.0):
     return saida, duracao
 
 
+def gerar_galo(duracao=9.0):
+    """Galo: cucurucus dispersos (varredura descendente com vibrato)."""
+    n = int(duracao * SR)
+    saida = np.zeros(n)
+    random.seed(41)
+
+    def cucurucu(t0):
+        dur = 0.7
+        m = int(dur * SR)
+        tt = np.linspace(0, dur, m, endpoint=False)
+        # Quatro sílabas descendentes (go-go-go-gó)
+        f0 = 700.0
+        freq = np.where(
+            tt < 0.12, 720,
+            np.where(tt < 0.24, 660,
+                     np.where(tt < 0.36, 600, 520 - 80 * (tt - 0.36) / 0.34)))
+        vibrato = 1 + 0.04 * np.sin(2 * np.pi * 28 * tt)
+        fase = 2 * np.pi * np.cumsum(freq * vibrato) / SR
+        env = np.sin(np.pi * np.minimum(tt / 0.05, 1)) ** 2
+        env *= np.exp(-tt * 1.1)
+        i0 = int(t0 * SR)
+        saida[i0:i0 + m] += np.sin(fase) * env * 0.8
+        # segunda harmónica para timbre metálico
+        saida[i0:i0 + m] += np.sin(2 * fase) * env * 0.25
+
+    for t0 in [0.3, 2.2, 4.6, 7.3]:
+        cucurucu(t0)
+    return saida, duracao
+
+
+def gerar_chuva(duracao=9.0):
+    """Chuva contínua: rumor rosa suave com pingos dispersos."""
+    n = int(duracao * SR)
+    rng = np.random.default_rng(43)
+    # rumor: ruído filtrado (média móvel longa = graves suaves)
+    ruido = rng.normal(0, 1, n)
+    kernel = np.ones(320) / 320
+    base = np.convolve(ruido, kernel, mode="same") * 0.25
+    # agudos: ruído quase cru, atenuado
+    base += ruido * 0.045
+    # pingos: impulsos curtos aleatórios
+    saida = base
+    for _ in range(90):
+        t0 = rng.uniform(0, duracao - 0.02)
+        m = int(0.02 * SR)
+        tt = np.linspace(0, 0.02, m, endpoint=False)
+        pingo = np.sin(2 * np.pi * rng.uniform(1800, 3600) * tt) * np.exp(-tt * 400)
+        i0 = int(t0 * SR)
+        saida[i0:i0 + m] += pingo * rng.uniform(0.05, 0.15)
+    return saida, duracao
+
+
+def gerar_cao(duracao=9.0):
+    """Cão: latidos dispersos (formantes graves com ataque rápido)."""
+    n = int(duracao * SR)
+    saida = np.zeros(n)
+    random.seed(47)
+
+    def latido(t0, f0=320.0):
+        dur = 0.28
+        m = int(dur * SR)
+        tt = np.linspace(0, dur, m, endpoint=False)
+        vibrato = 1 + 0.12 * np.sin(2 * np.pi * 22 * tt)
+        fase = 2 * np.pi * np.cumsum(f0 * vibrato * np.exp(-tt * 2)) / SR
+        env = np.sin(np.pi * np.minimum(tt / 0.015, 1)) ** 2
+        env *= np.exp(-tt * 5)
+        i0 = int(t0 * SR)
+        saida[i0:i0 + m] += (np.sin(fase) + 0.5 * np.sin(2 * fase) + 0.3 * np.sin(3 * fase)) * env * 0.9
+
+    # pares de latidos com pausas
+    for t0 in [0.4, 0.75, 2.8, 3.15, 5.5, 5.85, 7.6, 7.95]:
+        latido(t0, 300 + random.uniform(0, 50))
+    return saida, duracao
+
+
 if __name__ == "__main__":
     os.makedirs(PASTA, exist_ok=True)
     for nome, (dados, dur) in [
@@ -196,6 +274,9 @@ if __name__ == "__main__":
         ("vento.wav", gerar_vento()),
         ("grilos.wav", gerar_grilos()),
         ("trovoada.wav", gerar_trovoada()),
+        ("galo.wav", gerar_galo()),
+        ("chuva.wav", gerar_chuva()),
+        ("cao.wav", gerar_cao()),
     ]:
         salvar(nome, dados, dur)
     print("Concluído.")

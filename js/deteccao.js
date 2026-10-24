@@ -28,6 +28,28 @@ export const CORES = {
     gamas: [[45, 70]],
     nome: 'amarelo',
   },
+  // Laranja e castanho partilham a gama de matiz (15-40°): o
+  // castanho é «laranja escuro». São distinguidos pelo brilho (V):
+  // laranja vivo é claro (V alto), castanho é escuro mas saturado.
+  laranja: {
+    gamas: [[15, 40]],
+    // A matiz da pele humana (15-40°) coincide com esta gama. A
+    // proteção usa saturação E brilho: objetos laranja vivos têm
+    // S ~0,8-1 e V ~0,7-1; a pele (mesmo escura) fica abaixo disso.
+    satMinExtra: 0.45,  // s >= ~0.55 + 0.45 = 0.80 com sens. média
+    valMinExtra: 0.65,  // exige laranja claro e vivo
+    nome: 'laranja',
+  },
+  castanho: {
+    gamas: [[15, 40]],
+    satMinExtra: 0.45,  // exclui pele escura (S ~0,74)
+    valMax: 0.55,       // laranja escuro e saturado = castanho
+    nome: 'castanho',
+  },
+  roxo: {
+    gamas: [[270, 330]],
+    nome: 'roxo',
+  },
   // O preto não tem matiz: é detetado por ser escuro e pouco
   // saturado (ver LIM_PRETO_* em baixo), não por gamas de matiz.
   preto: {
@@ -118,11 +140,18 @@ export class DeteccaoCores {
     // a sua posição média.
     const caixas = {};
 
-    // Lista de [chave, gamas, limiarExtra] pré-computada uma única vez
+    // Lista de [chave, gamas, satExtra, valMinExtra, valMax]
+    // pré-computada uma única vez.
     if (!this._alvos) {
       this._alvos = Object.entries(CORES)
         .filter(([, def]) => !def.escuro)
-        .map(([chave, def]) => [chave, def.gamas, def.satMinExtra || 0]);
+        .map(([chave, def]) => [
+          chave,
+          def.gamas,
+          def.satMinExtra || 0,
+          def.valMinExtra || 0,
+          def.valMax || 1,
+        ]);
       this._chavesEscuras = Object.entries(CORES)
         .filter(([, def]) => def.escuro)
         .map(([chave]) => chave);
@@ -195,6 +224,9 @@ export class DeteccaoCores {
         // Cores com satMinExtra exigem saturação adicional (ex.: o vermelho,
         // para não confundir a pele humana com um objeto vermelho)
         if (hsvSaida[1] < satMin + alvos[a][2]) continue;
+        // valMinExtra / valMax: brilho mínimo ou máximo (o castanho é
+        // «laranja escuro», o laranja vivo exige V alto)
+        if (hsvSaida[2] < alvos[a][3] || hsvSaida[2] > alvos[a][4]) continue;
         const gamas = alvos[a][1];
         for (let g = 0; g < gamas.length; g++) {
           if (hsvSaida[0] >= gamas[g][0] && hsvSaida[0] <= gamas[g][1]) {

@@ -70,6 +70,12 @@ const casos = [
   ['#2980b9', 'azul'],    // azul mais escuro
   ['#f1c40f', 'amarelo'], // amarelo vivo
   ['#d4ac2b', 'amarelo'], // amarelo ouro
+  ['#e67e22', 'laranja'], // laranja vivo
+  ['#f39c12', 'laranja'], // laranja claro
+  ['#6e3b10', 'castanho'], // castanho escuro
+  ['#8b4513', 'castanho'], // castanho sela
+  ['#8e44ad', 'roxo'],   // roxo vivo
+  ['#9b59b6', 'roxo'],   // roxo claro
   ['#1a1a1a', 'preto'],    // preto quase puro
   ['#0d0d0d', 'preto'],    // preto profundo
 ];
@@ -140,6 +146,14 @@ for (const [hex, nome] of tonsDePele) {
   const vermelhoAtivo = res.cores.vermelho.presente;
   verificar(`${nome} (${hex}) → não detetada como vermelho`,
     !vermelhoAtivo, 'detetada como vermelho');
+  // A pele tem a mesma matiz do laranja/castanho: os limiares de
+  // saturação e brilho devem excluí-la também desses dois canais.
+  const laranjaAtivo = res.cores.laranja.presente;
+  verificar(`${nome} (${hex}) → não detetada como laranja`,
+    !laranjaAtivo, 'detetada como laranja');
+  const castanhoAtivo = res.cores.castanho.presente;
+  verificar(`${nome} (${hex}) → não detetada como castanho`,
+    !castanhoAtivo, 'detetada como castanho');
 }
 
 // ---------- 2. Histerese: tempos de ligar/desligar ----------
@@ -254,19 +268,48 @@ verificar(
   );
 }
 
-// ---------- 4. Gamas de matiz sem sobreposições ----------
+// ---------- 4. Gamas de matiz: sobreposição só com brilho disjunto ----------
 
 {
-  const gamas = Object.values(CORES).flatMap((c) => c.gamas);
-  let semSobreposicao = true;
+  // Laranja e castanho partilham a matiz (15-40°) por desenho:
+  // distinguem-se pelo brilho (V). O teste exige que quaisquer duas
+  // cores cujas gamas se sobreponham tenham gamas de brilho disjuntas.
+  const entradas = Object.values(CORES).filter((c) => c.gamas.length > 0);
+  let coerente = true;
   for (let h = 0; h < 360; h += 1) {
-    let pertences = 0;
-    for (const [hMin, hMax] of gamas) {
-      if (h >= hMin && h <= hMax) pertences++;
+    const ativos = entradas.filter(
+      (c) => c.gamas.some(([hMin, hMax]) => h >= hMin && h <= hMax)
+    );
+    for (let i = 0; i < ativos.length; i++) {
+      for (let j = i + 1; j < ativos.length; j++) {
+        const a = ativos[i], b = ativos[j];
+        const minA = a.valMinExtra || 0, maxA = a.valMax || 1;
+        const minB = b.valMinExtra || 0, maxB = b.valMax || 1;
+        if (Math.max(minA, minB) < Math.min(maxA, maxB)) { coerente = false; }
+      }
     }
-    if (pertences > 1) { semSobreposicao = false; break; }
+    if (!coerente) break;
   }
-  verificar('gamas de matiz sem sobreposições', semSobreposicao);
+  verificar('sobreposições de matiz apenas com brilho disjunto', coerente);
+
+  // Confirmação direta: um laranja vivo NÃO conta como castanho e
+  // vice-versa (mesma matiz, brilhos diferentes).
+  {
+    const dL = criarDetectorComFrame('#e67e22');
+    let rL = null;
+    for (let i = 0; i < 5; i++) rL = dL.analisar(video, SENS);
+    verificar(
+      'laranja vivo ativa galo e não chuva',
+      rL.cores.laranja.presente && !rL.cores.castanho.presente
+    );
+    const dC = criarDetectorComFrame('#5a2e0a');
+    let rC = null;
+    for (let i = 0; i < 5; i++) rC = dC.analisar(video, SENS);
+    verificar(
+      'castanho escuro ativa chuva e não galo',
+      rC.cores.castanho.presente && !rC.cores.laranja.presente
+    );
+  }
 }
 
 // ---------- 5. Caixa delimitadora do objeto ----------

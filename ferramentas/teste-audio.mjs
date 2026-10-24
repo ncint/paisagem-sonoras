@@ -3,7 +3,7 @@
 //
 // Substitui window.AudioContext e fetch por versões simuladas e
 // verifica os fluxos que já causaram bugs reais:
-//   1. iniciar() cria 5 loops e fica «pronto»;
+//   1. iniciar() cria 8 loops e fica «pronto»;
 //   2. ouvir() ANTES de iniciar() não deve fazer o motor parecer pronto;
 //   3. parar() + iniciar() mantém os sons substituídos pelo utilizador;
 //   4. substituirSom() troca o loop a quente sem tocar nos restantes;
@@ -92,6 +92,9 @@ const FICHEIROS_BASE = {
   azul: 'audio/vento.wav',
   amarelo: 'audio/grilos.wav',
   preto: 'audio/trovoada.wav',
+  laranja: 'audio/galo.wav',
+  castanho: 'audio/chuva.wav',
+  roxo: 'audio/cao.wav',
 };
 
 // fetch simulado: devolve sempre sucesso com um "WAV" identificável
@@ -110,7 +113,7 @@ globalThis.fetch = (url) => {
   const m = new MotorAudio();
   await m.iniciar(0.7);
   verificar('iniciar() fica pronto', m.pronto === true);
-  verificar('iniciar() cria 5 loops', Object.keys(m.canais).length === 5);
+  verificar('iniciar() cria 8 loops', Object.keys(m.canais).length === 8);
   verificar('todos os loops a tocar', Object.values(m.canais).every(c => c.origem._started));
 }
 
