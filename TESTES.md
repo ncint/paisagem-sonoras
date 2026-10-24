@@ -50,7 +50,7 @@ Registra o resultado de cada teste numa coluna à direita.
 | 21 | Barras-guia | Com o instrumento ativo, mover um objeto para cima/baixo e esquerda/direita | A barra vertical à esquerda enche quando o objeto sobe (volume); o marcador da barra em baixo desliza para o lado do objeto (panorâmica); desaparecem ao parar | ☐ | |
 | 22 | Ecrã inteiro (PC) | Clicar «⤢ Ecrã inteiro» e voltar a clicar (ou Esc) | A imagem do vídeo ocupa o ecrã todo, com as deteções e barras-guia visíveis; Esc sai do modo | ☐ | |
 | 23 | Trocar de câmara | Após iniciar, abrir o seletor «Câmara» nos Ajustes e escolher outra câmara (no telemóvel: frontal/traseira) | A imagem muda para a câmara escolhida sem parar os sons; a deteção continua a funcionar | ☐ | |
-| 24 | Visualizadores | Com o instrumento ativo, colocar e mover objetos | Cada elemento ativo mostra a sua animação (ondas na água, pingos na chuva, relâmpago na trovoada, pulsos nos restantes) com intensidade proporcional à altura do objeto | ☐ | |
+| 24 | Visualizadores | Com o instrumento ativo, colocar e mover objetos | Cada elemento ativo mostra a sua animação (ondas na água, pingos na chuva, relâmpago na trovoada, pulsos nos restantes) com intensidade proporcional à altura do objeto — tanto no painel como sobre o vídeo, junto ao objeto | ☐ | |
 
 ## Estado dos testes (para preencher)
 

@@ -270,6 +270,20 @@ function desenharDeteccao(res) {
     ctxCanvas.lineWidth = 3;
     ctxCanvas.strokeRect(cx0, cy0, cx1 - cx0, cy1 - cy0);
 
+    // Visualizador do elemento sobre o vídeo, DENTRO do retângulo do
+    // objeto: o mesmo motivo do painel (ondas, pingos, relâmpagos...)
+    // ampliado, com fundo escuro semitransparente para se ler sobre
+    // qualquer imagem da câmara.
+    const escalaVideo = 1.6;
+    const visL = LARGURA_VIS * escalaVideo;
+    const visA = ALTURA_VIS * escalaVideo;
+    const visX = Math.min(Math.max(centroX - visL / 2, offsetX + 6),
+      Math.max(larguraPx - visL - 6, offsetX + 6));
+    const visY = Math.min(cy1 - visA - 10, Math.max(cy0 + 6, alturaPx - visA - 6));
+    ctxCanvas.fillStyle = 'rgba(22, 24, 28, 0.62)';
+    ctxCanvas.fillRect(visX, visY, visL, visA);
+    desenharMotivo(ctxCanvas, chave, info.intensidade, performance.now() / 1000, escalaVideo);
+
     // Seta vertical: aponta para CIMA (o volume sobe quando o objeto
     // está mais acima); o comprimento é proporcional à intensidade.
     const lenVol = 18 + 30 * info.intensidade;
@@ -361,18 +375,18 @@ function criarVisualizadores() {
   }
 }
 
-// Desenha um frame do visualizador de um elemento.
+// Desenha o motivo de um elemento num contexto 2D qualquer, com a
+// escala dada. Usado tanto nos mini-canvas do painel (escala 1) como
+// no overlay sobre o vídeo (escala maior, junto ao objeto).
 // nivel: 0 (parado) a 1 (intenso).
-function desenharVisualizador(chave, nivel, t) {
-  const ctx = visualizadores[chave];
-  if (!ctx) return;
-  const W = LARGURA_VIS, H = ALTURA_VIS;
-  ctx.clearRect(0, 0, W, H);
+function desenharMotivo(ctx, chave, nivel, t, escala = 1) {
+  const W = LARGURA_VIS * escala;
+  const H = ALTURA_VIS * escala;
   const cor = CORES_TRAO[chave];
   const motivo = MOTIVOS[chave];
   const a = 0.15 + 0.85 * nivel; // amplitude
 
-  ctx.lineWidth = 1.6;
+  ctx.lineWidth = 1.6 * escala;
   ctx.strokeStyle = cor;
   ctx.fillStyle = cor;
 
@@ -382,10 +396,10 @@ function desenharVisualizador(chave, nivel, t) {
     for (let l = 0; l < linhas; l++) {
       const yBase = H * (0.35 + l * 0.28);
       ctx.beginPath();
-      for (let x = 0; x <= W; x += 3) {
+      for (let x = 0; x <= W; x += 3 * escala) {
         const y = yBase
-          + Math.sin(x * (motivo === 'chuva' ? 0.30 : 0.12) + t * (2 + l) + l * 2) * 4 * a
-          + (motivo === 'vento' ? Math.sin(x * 0.05 - t * 3) * 3 * a : 0);
+          + Math.sin(x * (motivo === 'chuva' ? 0.30 : 0.12) / escala + t * (2 + l) + l * 2) * 4 * a * escala
+          + (motivo === 'vento' ? Math.sin(x * 0.05 / escala - t * 3) * 3 * a * escala : 0);
         if (x === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
       }
@@ -394,13 +408,13 @@ function desenharVisualizador(chave, nivel, t) {
     if (motivo === 'chuva') {
       // pingos a cair
       for (let p = 0; p < 4; p++) {
-        const xg = 12 + p * 28 + (Math.sin(t * 1.7 + p) * 6 * a);
-        const yg = ((t * 60 * (0.6 + a) + p * 23) % (H + 10)) - 5;
-        ctx.fillRect(xg, yg, 1.4, 5);
+        const xg = (12 + p * 28 + (Math.sin(t * 1.7 + p) * 6 * a)) * escala;
+        const yg = ((t * 60 * (0.6 + a) * escala + p * 23 * escala) % (H + 10 * escala)) - 5 * escala;
+        ctx.fillRect(xg, yg, 1.4 * escala, 5 * escala);
       }
     }
   } else if (motivo === 'aves' || motivo === 'grilos' || motivo === 'galo' || motivo === 'cao') {
-    // Pulsos: traços verticais com "batidas" rítmicas distintas por som
+    // Pulsos: "batidas" rítmicas distintas por som
     const batidas = {
       aves: [0.3, 0.55, 0.8, 1.3, 1.7, 2.1],
       grilos: [0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6],
@@ -410,12 +424,12 @@ function desenharVisualizador(chave, nivel, t) {
     const ciclo = 4.0; // segundos
     const tc = t % ciclo;
     for (let b = 0; b < batidas.length; b++) {
-      const x = 8 + b * ((W - 16) / (batidas.length - 1));
+      const x = (8 + b * ((LARGURA_VIS - 16) / (batidas.length - 1))) * escala;
       const dt = Math.abs(tc - batidas[b]);
       const pulso = Math.max(0, 1 - dt * 6) * a;
-      const alt = 3 + pulso * (H * 0.75);
+      const alt = (3 + pulso * (ALTURA_VIS * 0.75)) * escala;
       ctx.beginPath();
-      ctx.arc(x, H - alt - 2, 2 + pulso * 2, 0, Math.PI * 2);
+      ctx.arc(x, H - alt - 2 * escala, (2 + pulso * 2) * escala, 0, Math.PI * 2);
       ctx.fill();
     }
   } else if (motivo === 'trovoada') {
@@ -425,10 +439,10 @@ function desenharVisualizador(chave, nivel, t) {
     const flash = Math.max(0, 1 - Math.abs(tc - 1.0) * 8) * a;
     ctx.globalAlpha = 0.3 + flash;
     ctx.beginPath();
-    ctx.moveTo(10, 4);
-    ctx.lineTo(28, 16);
-    ctx.lineTo(20, 16);
-    ctx.lineTo(38, 30);
+    ctx.moveTo(10 * escala, 4 * escala);
+    ctx.lineTo(28 * escala, 16 * escala);
+    ctx.lineTo(20 * escala, 16 * escala);
+    ctx.lineTo(38 * escala, 30 * escala);
     ctx.stroke();
     if (flash > 0.5) {
       ctx.fillRect(0, 0, W, H);
@@ -437,8 +451,16 @@ function desenharVisualizador(chave, nivel, t) {
   }
 }
 
+// Desenha um frame do visualizador de um elemento no painel.
+function desenharVisualizador(chave, nivel, t) {
+  const ctx = visualizadores[chave];
+  if (!ctx) return;
+  ctx.clearRect(0, 0, LARGURA_VIS, ALTURA_VIS);
+  desenharMotivo(ctx, chave, nivel, t, 1);
+}
+
 // Atualiza todos os visualizadores; chamado no loop de animação.
-// Sem instrumento ativo, não desenha (os canvases ficam limpos).
+// Sem instrumento ativo, não desenha (os canvas ficam limpos).
 function passoVisualizadores(cores, t) {
   for (const chave of Object.keys(visualizadores)) {
     const info = cores ? cores[chave] : null;
